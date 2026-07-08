@@ -9,6 +9,31 @@
    scp*/dc-tpl* internals, which are compiler output and may change on
    any rebuild. Nothing here touches JS, the manifest, or app logic. */
 
+/* ---- responsive-grid overflow fix ----
+   The template emits `repeat(auto-fit, minmax(NNNpx, 1fr))` inline. A bare
+   `minmax(300px, …)` track cannot shrink below 300px, so on narrow phones the
+   track bursts out of its padded card and the text is clipped by the card's
+   `overflow: hidden`. Wrapping the floor in `min(NNNpx, 100%)` lets the track
+   collapse to the container width while preserving the multi-column layout at
+   every width where it actually fits. One rule per emitted floor value. */
+[style*="minmax(340px"]{ grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)) !important; }
+[style*="minmax(300px"]{ grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)) !important; }
+[style*="minmax(280px"]{ grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important; }
+[style*="minmax(220px"]{ grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)) !important; }
+[style*="minmax(190px"]{ grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)) !important; }
+[style*="minmax(180px"]{ grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)) !important; }
+[style*="auto-fill"][style*="minmax(260px"]{ grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)) !important; }
+
+/* a grid item whose own min-width exceeds the collapsed track re-introduces
+   the overflow — clear the floor and let it track its column */
+[style*="min-width: 280px"]{ min-width: 0 !important; }
+[style*="min-width: 300px"]{ min-width: 0 !important; }
+
+/* long unbroken strings (URLs, emails) must not push a card wider than the screen */
+@media (max-width: 720px){
+  [style*="grid-column: span 2"]{ grid-column: span 1 !important; }
+}
+
 header[data-header]{
   backdrop-filter: blur(20px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
@@ -129,6 +154,103 @@ a.scpf:hover, button.scpf:hover{
   animation-play-state: paused;
   transform: translateY(-3px) scale(1.06) !important;
 }
+
+/* ---- engagement chart (Content Studio) ----
+   Two steps of a single-hue gold ramp, generated in OKLCH and validated against
+   this card's composited surface (#0a1522): base 7.38:1, peak 12.36:1.
+   One series => one colour; the peak is emphasis, never a value ramp. */
+/* an author `display` beats the UA's [hidden]{display:none} — restore it so the
+   toggle can actually hide the flex/table children */
+.mchart [hidden]{ display: none !important; }
+.mchart{
+  --surface: #0a1522;
+  --bar: #c59f4c;
+  --bar-peak: #f6cf7c;
+  --grid: rgba(244,238,225,.08);
+  --axis: rgba(244,238,225,.16);
+  --ink-muted: #8C99A8;
+  --ink-2: #CBBA98;
+  --up: #7fd6a2;
+  position: relative; margin: 20px 0 0; padding: 0;
+}
+/* height includes headroom for the peak's direct label — the axis band is a
+   separate row below, so nothing gets a nested scrollbar */
+.mchart-plot{ position: relative; height: 176px; }
+.mchart-grid{ position: absolute; inset: 0; pointer-events: none; }
+/* solid hairlines, one step off surface — never dashed */
+.mchart-gline{ position: absolute; left: 0; right: 0; height: 1px; background: var(--grid); }
+.mchart-gline:first-child{ background: var(--axis); }
+.mchart-gline span{
+  position: absolute; left: 0; bottom: 3px; font-size: 10.5px; color: var(--ink-muted);
+  font-variant-numeric: tabular-nums; letter-spacing: .04em;
+}
+.mchart-bars{
+  position: absolute; inset: 0 0 0 34px; display: flex; align-items: flex-end;
+  gap: 2px; /* the 2px surface gap does the separating — no borders on marks */
+}
+.mcol{
+  /* the column is the hit target (full plot height), not the bar. min-width:0 so
+     14 columns never overflow the plot and give the card a nested scrollbar. */
+  flex: 1 1 0; min-width: 0;
+  height: 100%; display: flex; align-items: flex-end; justify-content: center;
+  position: relative; background: none; border: 0; padding: 0 2px; cursor: pointer;
+  transition: opacity .18s ease;
+}
+/* the column is a tall hit target; ring the bar, not the whole 176px box.
+   Overrides the global focus-visible rule above (later + !important). */
+.mcol:focus{ outline: none; }
+.mcol:focus-visible{ outline: none !important; }
+.mcol:focus-visible .mbar{ outline: 2px solid var(--bar-peak); outline-offset: 2px; }
+.mbar{
+  display: block; width: 100%; max-width: 24px; /* cap thickness, leave air */
+  height: var(--h);
+  background: var(--bar);
+  border-radius: 4px 4px 0 0;        /* rounded cap, square at the baseline */
+  transform-origin: center bottom;
+  transition: background .18s ease, filter .18s ease;
+}
+.mcol.is-peak .mbar{ background: var(--bar-peak); }
+.mchart:not(.no-anim) .mbar{ animation: mbarGrow .7s cubic-bezier(.2,.7,.2,1) var(--d) both; }
+@keyframes mbarGrow{ from{ transform: scaleY(0); } to{ transform: scaleY(1); } }
+.mcol.is-dim{ opacity: .45; }
+.mcol:hover .mbar{ filter: brightness(1.18); }
+/* direct label rides just above the bar cap, inside the plot box (never clipped) */
+.mpeak{
+  position: absolute; bottom: var(--h); left: 50%; transform: translate(-50%, -3px);
+  font-size: 11px; font-weight: 700; color: var(--ink-2); font-variant-numeric: tabular-nums;
+  pointer-events: none; white-space: nowrap;
+}
+.mchart-x{
+  display: flex; justify-content: space-between; margin: 8px 0 0 34px;
+}
+.mchart-x span{
+  font-size: 10.5px; color: var(--ink-muted); letter-spacing: .04em; white-space: nowrap;
+}
+.mchart-tip{
+  position: absolute; z-index: 5; pointer-events: none;
+  background: rgba(8,17,28,.96); border: 1px solid rgba(230,204,140,.4); border-radius: 10px;
+  padding: 9px 12px; min-width: 150px;
+  box-shadow: 0 18px 40px -18px rgba(0,0,0,.9);
+}
+.mchart-tip .tip-day{ font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
+.mchart-tip .tip-val{ font-size: 14.5px; font-weight: 600; color: #F4EEE1; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.mchart-tip .tip-delta{ font-size: 11.5px; color: var(--ink-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.mchart-tip .tip-delta.up{ color: var(--up); }
+.mchart-toggle{
+  margin-top: 14px; background: none; border: 1px solid rgba(244,238,225,.2); color: var(--ink-2);
+  border-radius: 999px; padding: 6px 14px; font-size: 11.5px; cursor: pointer;
+  transition: border-color .25s, color .25s;
+}
+.mchart-toggle:hover{ border-color: rgba(230,204,140,.6); color: #E6CC8C; }
+.mchart-note{ margin-top: 10px; font-size: 11px; color: var(--ink-muted); font-style: italic; }
+.mchart-table{ width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 4px; }
+.mchart-table caption{ text-align: left; font-size: 11px; color: var(--ink-muted); padding-bottom: 8px; }
+.mchart-table th, .mchart-table td{
+  text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--grid); color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.mchart-table th[scope=row]{ text-align: left; color: var(--ink-muted); font-weight: 500; }
+.mchart-table thead th{ color: var(--ink-muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: 10px; }
 
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

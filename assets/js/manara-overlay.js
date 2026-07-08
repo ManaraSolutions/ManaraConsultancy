@@ -6,7 +6,7 @@
    to a more detailed illustration. Purely additive — no app logic touched. */
 (function () {
   var CSS_ID = 'manara-overlay-css';
-  var CSS_HREF = 'assets/css/manara-overlay.css?v=3';
+  var CSS_HREF = 'assets/css/manara-overlay.css?v=11';
 
   function injectCss() {
     if (document.getElementById(CSS_ID)) return;
@@ -60,13 +60,105 @@
     '<path d="M32 15.5 l1.1 2.3 2.5 .35 -1.8 1.75 .45 2.5 -2.25 -1.2 -2.25 1.2 .45 -2.5 -1.8 -1.75 2.5 -.35 Z" fill="#E6CC8C"/>' +
     '<path d="M16 30 q-2 3 -1.5 6 M48 30 q2 3 1.5 6" stroke="#8a8378" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
 
+  // matches the original aria-label and the reworded one below
+  var CAPTAIN_BTN = 'button[aria-label^="Another"][aria-label*="captain"]';
+
   function upgradePirate() {
-    var btns = document.querySelectorAll('button[aria-label="Another joke from the captain"] svg');
+    var btns = document.querySelectorAll(CAPTAIN_BTN + ' svg');
     btns.forEach(function (svg) {
       if (svg.getAttribute('data-manara-captain')) return;
       svg.setAttribute('data-manara-captain', '1');
       svg.innerHTML = CAPTAIN_SVG;
     });
+  }
+
+  /* ---------------------------------------------------------------------
+     Captain Marlow speaks wisdom, not pirate puns.
+
+     PROVENANCE — every line below is either a standard translation of a
+     primary source, or is credited to the person who actually wrote it.
+     Two famous lines were checked and deliberately handled:
+       • "We are what we repeatedly do…" is WILL DURANT paraphrasing Aristotle
+         in The Story of Philosophy (1926) — it is NOT a quotation of Aristotle,
+         so it is credited to Durant.
+       • "The whole problem with the world is that fools and fanatics…" is an
+         internet paraphrase of Russell and is NOT used; his real sentence,
+         from "The Triumph of Stupidity" (1933), appears instead.
+     Lines marked (trad.) are traditional attributions reported by later
+     sources (Diogenes Laertius; Plato's Cratylus) rather than surviving text.
+     --------------------------------------------------------------------- */
+  var QUOTES = [
+    // — ancient Greek —
+    { q: 'The unexamined life is not worth living.', a: 'Socrates' },
+    { q: 'The beginning is the most important part of the work.', a: 'Plato' },
+    { q: 'We become just by doing just acts, temperate by doing temperate acts, brave by doing brave acts.', a: 'Aristotle' },
+    { q: 'Men are disturbed not by things, but by the views which they take of them.', a: 'Epictetus' },
+    { q: 'First say to yourself what you would be; and then do what you have to do.', a: 'Epictetus' },
+    { q: 'No man ever steps in the same river twice.', a: 'Heraclitus' }, // trad., via Plato's Cratylus
+    { q: 'The wealth required by nature is limited and easy to procure.', a: 'Epicurus' },
+    { q: 'We have two ears and one mouth, so that we may listen more and speak less.', a: 'Zeno of Citium' }, // trad.
+    // — contemporary —
+    { q: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.', a: 'Will Durant' },
+    { q: 'When we are no longer able to change a situation, we are challenged to change ourselves.', a: 'Viktor Frankl' },
+    { q: 'Nothing in life is as important as you think it is while you are thinking about it.', a: 'Daniel Kahneman' },
+    { q: 'You may not control all the events that happen to you, but you can decide not to be reduced by them.', a: 'Maya Angelou' },
+    { q: 'Becoming is better than being.', a: 'Carol Dweck' },
+    { q: 'Enthusiasm is common. Endurance is rare.', a: 'Angela Duckworth' },
+    { q: 'Difficulty is what wakes up the genius.', a: 'Nassim Nicholas Taleb' },
+    { q: 'Civilization advances by extending the number of important operations which we can perform without thinking about them.', a: 'Alfred North Whitehead' },
+    { q: 'It takes twenty years to build a reputation and five minutes to ruin it.', a: 'Warren Buffett' },
+    { q: 'To be a good human being is to have a kind of openness to the world.', a: 'Martha Nussbaum' }
+  ];
+
+  var OPEN = '“', CLOSE = '”', DASH = ' — ';
+
+  // Fisher-Yates so the captain never repeats until the deck is spent
+  var order = QUOTES.map(function (_, i) { return i; });
+  for (var s = order.length - 1; s > 0; s--) {
+    var j = Math.floor(Math.random() * (s + 1));
+    var tmp = order[s]; order[s] = order[j]; order[j] = tmp;
+  }
+  var cursor = 0;
+
+  function nextQuote() {
+    var q = QUOTES[order[cursor]];
+    cursor = (cursor + 1) % order.length;
+    return OPEN + q.q + CLOSE + DASH + q.a;
+  }
+
+  function isOurs(text) {
+    return text.charAt(0) === OPEN && text.indexOf(DASH) > -1;
+  }
+
+  /* Anchor on the captain's button, never on text. Searching for a <div> whose
+     textContent is "Captain Marlow" looks tempting, but while the quote span is
+     momentarily empty mid-render an ANCESTOR div also matches that text; divs come
+     back in document order, so the ancestor wins and the search scope balloons to
+     the whole page — which is how a quote once landed in the header's clock. The
+     button and the bubble are siblings under the same wrapper. */
+  function findBubbleSpan() {
+    var btn = document.querySelector(CAPTAIN_BTN);
+    var wrap = btn && btn.parentElement;
+    if (!wrap) return null;
+    var span = wrap.querySelector('span.sc-interp');
+    // never write into page chrome, whatever the markup does next
+    if (!span || span.closest('header')) return null;
+    return span;
+  }
+
+  /* React owns this text node, so we cannot simply replace it once: every time
+     the runtime re-renders a joke we overwrite it with the next quote. Writing
+     our own text triggers another mutation, hence the isOurs() guard. */
+  function captainSpeaksWisdom() {
+    var btn = document.querySelector(CAPTAIN_BTN);
+    if (btn && btn.getAttribute('aria-label').indexOf('joke') > -1) {
+      btn.setAttribute('aria-label', 'Another reflection from the captain');
+    }
+    var span = findBubbleSpan();
+    if (!span) return;
+    var text = (span.textContent || '').trim();
+    if (!text || isOurs(text)) return;
+    span.textContent = nextQuote();
   }
 
   /* Realistic, self-animating HRM icon: a manager node at the centre of a
@@ -137,12 +229,58 @@
     });
   }
 
+  /* The bundled page's "Request a consultation" CTAs are <a href="#contact">
+     wired to a React handler that opens a blank mailto template. Point them at
+     the real consultation form instead. The href swap alone is not enough — the
+     runtime's delegated click listener still fires — so a capture-phase guard
+     stops the event before it reaches React's root listener. */
+  /* Every CTA aimed at the contact anchor ("Request a consultation", "Discuss →",
+     "Automate my content", …) used to open a blank mailto template. Rather than
+     enumerate the copy, rewire them all and exclude only the bare nav "Contact"
+     link, which should still jump to the contact section (WhatsApp / call). */
+  var NAV_CONTACT = /^contact$/i;
+  // pricing.html / content-studio.html link across to the homepage anchor
+  var CONSULT_HREFS = 'a[href="#contact"], a[href="index.html#contact"]';
+
+  function isConsultCta(el) {
+    var a = el && el.closest ? el.closest('a') : null;
+    if (!a) return null;
+    if (!a.getAttribute('data-manara-consult')) return null;
+    return a;
+  }
+
+  function rewireConsultCtas() {
+    document.querySelectorAll(CONSULT_HREFS).forEach(function (a) {
+      if (a.getAttribute('data-manara-consult')) return;
+      if (NAV_CONTACT.test((a.textContent || '').trim())) return;
+      a.setAttribute('data-manara-consult', '1');
+      a.setAttribute('href', 'consultation.html');
+    });
+  }
+
+  function armConsultGuard() {
+    if (window.__manaraConsultGuard) return;
+    window.__manaraConsultGuard = true;
+    document.addEventListener('click', function (e) {
+      var a = isConsultCta(e.target);
+      if (!a) return;
+      // let modified clicks (new tab / new window) behave natively
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.location.href = 'consultation.html';
+    }, true);
+  }
+
   function tick() {
     injectCss();
     upgradePirate();
+    captainSpeaksWisdom();
     upgradeHrmIcon();
     tagHrCard();
     injectAboutNav();
+    rewireConsultCtas();
+    injectFooterSocial();
   }
 
   var mo = new MutationObserver(function () {
@@ -154,9 +292,37 @@
     });
   });
 
+  var LINKEDIN_URL = 'https://www.linkedin.com/in/manara-consultancy-lebanon/';
+  var LINKEDIN_PATH = 'M4.98 3.5a2.5 2.5 0 1 1-.02 5.001A2.5 2.5 0 0 1 4.98 3.5zM3 8.98h4v12.02H3V8.98zM9.5 8.98h3.83v1.64h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.44 4.78 5.61V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 2.99V21h-4V8.98z';
+
+  function injectFooterSocial() {
+    document.querySelectorAll('footer').forEach(function (f) {
+      if (f.querySelector('[data-manara-li]')) return;
+      var host = f.firstElementChild || f;
+      var a = document.createElement('a');
+      a.href = LINKEDIN_URL;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.setAttribute('data-manara-li', '1');
+      a.setAttribute('aria-label', 'Manara Consultancy on LinkedIn');
+      a.title = 'Manara Consultancy on LinkedIn';
+      a.style.cssText = 'display:inline-flex;align-items:center;gap:8px;color:#8C99A8;font-size:12.5px;' +
+        'text-decoration:none;transition:color .25s';
+      a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+        '<path d="' + LINKEDIN_PATH + '"/></svg><span>LinkedIn</span>';
+      a.addEventListener('mouseenter', function () { a.style.color = '#E6CC8C'; });
+      a.addEventListener('mouseleave', function () { a.style.color = '#8C99A8'; });
+      host.appendChild(a);
+    });
+  }
+
   function arm() {
     tick();
-    mo.observe(document.documentElement, { childList: true, subtree: true });
+    armConsultGuard();
+    // characterData matters: React swaps the captain's line by rewriting a text
+    // node, which is not a childList mutation and would otherwise go unseen.
+    // Observe `document` so a documentElement swap can't detach us either.
+    mo.observe(document, { childList: true, subtree: true, characterData: true });
   }
 
   if (document.readyState === 'loading') {

@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request a Consultation | Manara Consultancy</title>
+<meta name="description" content="Request a consultation with Manara Consultancy. Choose your practice, timeline and budget, download your request as a PDF, or send it to us directly.">
+<link rel="canonical" href="https://manaraconsultancy.online/consultation.html"><meta name="robots" content="index, follow"><meta name="theme-color" content="#0C1A2A">
+<link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Manara Consultancy"><meta property="og:title" content="Request a Consultation | Manara Consultancy"><meta property="og:description" content="Tell us where you're headed and we'll help you chart the course."><meta property="og:url" content="https://manaraconsultancy.online/consultation.html"><meta property="og:image" content="https://manaraconsultancy.online/og-image.jpg"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ContactPage","name":"Request a Consultation","url":"https://manaraconsultancy.online/consultation.html","about":{"@type":"ProfessionalService","name":"Manara Consultancy","email":"hello@manaraconsultancy.online","telephone":"+96176952134"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/manara-theme.css?v=4">
+<style>
+:root{--wrap-max:1120px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:30px;align-items:start;margin-top:40px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+
+/* ---- form panel ---- */
+.panel{border:1px solid rgba(var(--cream-rgb),.15);border-radius:var(--radius-md);padding:28px;
+  background:linear-gradient(160deg,rgba(var(--cream-rgb),.05),rgba(12,26,42,.6) 62%);
+  backdrop-filter:blur(16px) saturate(135%);-webkit-backdrop-filter:blur(16px) saturate(135%);
+  box-shadow:0 1px 0 rgba(var(--cream-rgb),.06) inset,0 26px 54px -32px rgba(0,0,0,.7)}
+.step{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin:26px 0 12px;display:flex;align-items:center;gap:10px}
+.step:first-of-type{margin-top:0}
+.step i{flex:1;height:1px;background:rgba(var(--cream-rgb),.14);font-style:normal}
+
+/* browsable option chips */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px}
+.opt{position:relative;display:flex;flex-direction:column;gap:3px;cursor:pointer;
+  border:1px solid rgba(var(--cream-rgb),.16);border-radius:var(--radius-sm);padding:13px 15px;
+  background:rgba(12,26,42,.5);transition:transform .3s var(--ease-out),border-color .3s,background .3s}
+.opt:hover{transform:translateY(-3px);border-color:rgba(var(--gold-rgb),.45)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt b{font-family:"Cormorant Garamond",serif;font-size:17.5px;font-weight:600;line-height:1.2}
+.opt s{text-decoration:none;font-size:12px;color:var(--muted)}
+.opt:has(input:checked){border-color:var(--gold);background:rgba(var(--gold-rgb),.12)}
+.opt:has(input:focus-visible){outline:2px solid var(--gold-light);outline-offset:2px}
+.opt:has(input:checked)::after{content:"✓";position:absolute;top:10px;right:12px;color:var(--gold-light);font-size:13px;font-weight:700}
+
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px}
+label.fld{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--sand-mid)}
+input[type=text],input[type=email],input[type=tel],select,textarea{
+  font-family:Archivo,system-ui,sans-serif;font-size:14.5px;color:var(--cream);
+  background:rgba(6,13,22,.6);border:1px solid rgba(var(--cream-rgb),.18);border-radius:10px;
+  padding:11px 13px;width:100%;transition:border-color .25s,box-shadow .25s}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,rgba(230,204,140,.8) 50%),linear-gradient(135deg,rgba(230,204,140,.8) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 51%,calc(100% - 13px) 51%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:36px}
+select option{background:#0C1A2A;color:#F4EEE1}
+textarea{min-height:96px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(var(--gold-rgb),.18)}
+input::placeholder,textarea::placeholder{color:rgba(140,153,168,.7)}
+.phone{display:flex;gap:0}
+.phone .dial{display:flex;align-items:center;gap:6px;white-space:nowrap;font-size:14px;color:var(--gold-light);
+  background:rgba(var(--gold-rgb),.12);border:1px solid rgba(var(--cream-rgb),.18);border-right:none;
+  border-radius:10px 0 0 10px;padding:0 13px;min-width:96px}
+.phone input{border-radius:0 10px 10px 0}
+.err{color:#ff9d8a;font-size:12px;margin-top:6px;display:none}
+.err.on{display:block}
+input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:#ff9d8a}
+
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.status{margin-top:14px;font-size:13px;color:var(--sand-mid);min-height:20px}
+.status.ok{color:#8fe3b0}.status.bad{color:#ff9d8a}
+button.btn,button.btn2{cursor:pointer;font-family:Archivo,sans-serif}
+button[disabled]{opacity:.55;cursor:progress}
+
+/* ---- printable sheet (mirrors the quotation sheet) ---- */
+.sheetwrap{position:sticky;top:88px}
+@media (max-width:900px){.sheetwrap{position:static}}
+.sheet{background:#0C1A2A;border:1px solid rgba(var(--gold-rgb),.35);border-radius:var(--radius-md);
+  padding:34px 32px;color:var(--cream);box-shadow:0 30px 70px -36px rgba(0,0,0,.85)}
+.sheet .sh{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
+  border-bottom:1px solid rgba(var(--cream-rgb),.16);padding-bottom:18px}
+.sheet .brand{display:flex;align-items:center;gap:10px;font-family:"Cormorant Garamond",serif;font-size:23px;font-weight:600}
+.sheet .ref{text-align:right;font-size:11.5px;color:var(--muted);line-height:1.7}
+.sheet .ref b{display:block;color:var(--gold-light);font-size:13px;letter-spacing:.06em}
+.sheet h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:30px;margin:22px 0 4px}
+.sheet .sub{font-size:13px;color:var(--muted)}
+.sheet dl{margin:22px 0 0;display:grid;grid-template-columns:132px minmax(0,1fr);gap:10px 16px;font-size:13.5px}
+.sheet dt{color:var(--muted);letter-spacing:.03em}
+.sheet dd{margin:0;color:var(--cream-soft);word-break:break-word}
+.sheet dd.dim{color:var(--muted);font-style:italic}
+.sheet .pills{display:flex;flex-wrap:wrap;gap:6px}
+.sheet .pill{font-size:11.5px;border:1px solid rgba(var(--gold-rgb),.4);background:rgba(var(--gold-rgb),.12);
+  color:var(--gold-light);border-radius:999px;padding:4px 10px}
+.sheet .foot{margin-top:26px;padding-top:16px;border-top:1px solid rgba(var(--cream-rgb),.16);
+  font-size:11.5px;color:var(--muted);line-height:1.7}
+
+@media print{
+  body{background:#fff}
+  .bg,header,.panel,.actions,.status,.noprint,footer{display:none !important}
+  .grid2{display:block}.sheetwrap{position:static}
+  .sheet{border:none;box-shadow:none;border-radius:0;padding:0}
+}
+</style></head>
+<body data-scene="dawn">
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="gridbg"></div></div>
+<header><div class="hin"><a class="logo" href="index.html"><svg viewBox="0 0 40 40" fill="none" style="width:23px;height:23px" role="img" aria-label="Manara Consultancy lighthouse logo"><path d="M20 3 L24 28 H16 Z" fill="#C7A14E"/><circle cx="20" cy="8" r="3.2" fill="#E6CC8C"/><rect x="13" y="30" width="14" height="6" rx="1.5" fill="#C7A14E"/></svg>Manara</a><a class="back" href="index.html">← Back to Manara</a></div></header>
+
+<main class="wrap">
+<section style="padding:70px 0 0" data-reveal>
+  <div class="eyebrow"><span class="dot"></span>Request a consultation</div>
+  <h1>Tell us where <em>you're headed</em>.</h1>
+  <p class="intro">Browse the options below. Your request builds into a document on the right, which you can download as a PDF or send to us directly — no blank email template to fill in.</p>
+</section>
+
+<form class="grid2" id="cform" novalidate>
+  <div class="panel" data-reveal>
+
+    <div class="step">Step 1 <i></i> Which practice?</div>
+    <div class="opts" role="group" aria-label="Preferred practice">
+      <label class="opt"><input type="radio" name="practice" value="Advisory" checked><b>Advisory</b><s>Business, startup &amp; AI counsel</s></label>
+      <label class="opt"><input type="radio" name="practice" value="Private"><b>Private</b><s>Careers, LinkedIn &amp; coaching</s></label>
+      <label class="opt"><input type="radio" name="practice" value="Scholars"><b>Scholars</b><s>Research &amp; mentorship</s></label>
+      <label class="opt"><input type="radio" name="practice" value="Thesis"><b>Thesis</b><s>Dissertation &amp; SPSS support</s></label>
+    </div>
+
+    <div class="step">Step 2 <i></i> Services of interest</div>
+    <div class="opts" role="group" aria-label="Services of interest">
+      <label class="opt"><input type="checkbox" name="service" value="Business Consulting"><b>Business Consulting</b><s>Growth &amp; restructuring</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="Startup Consulting"><b>Startup Consulting</b><s>Validation to investors</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="AI Consulting &amp; Agents"><b>AI Consulting</b><s>Agents &amp; automation</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="Social Content Studio"><b>Content Studio</b><s>Calendars &amp; carousels</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="LinkedIn Management"><b>LinkedIn Management</b><s>Executive branding</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="Career Consulting"><b>Career Consulting</b><s>Coaching &amp; interviews</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="Thesis &amp; Research Support"><b>Thesis Support</b><s>Methodology &amp; SPSS</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="HR Consultancy"><b>HR Consultancy</b><s>Structure &amp; policies</s></label>
+      <label class="opt"><input type="checkbox" name="service" value="Tender Support"><b>Tender Support</b><s>Bids &amp; proposals</s></label>
+    </div>
+    <p class="err" id="e-service">Choose at least one service.</p>
+
+    <div class="step">Step 3 <i></i> Scope</div>
+    <div class="row">
+      <label class="fld">Timeline
+        <select name="timeline">
+          <option>As soon as possible</option>
+          <option selected>Within a month</option>
+          <option>This quarter</option>
+          <option>Just exploring</option>
+        </select>
+      </label>
+      <label class="fld">Indicative budget
+        <select name="budget">
+          <option selected>Prefer to discuss</option>
+          <option>Under $1,000</option>
+          <option>$1,000 – $5,000</option>
+          <option>$5,000 – $15,000</option>
+          <option>Above $15,000</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="step">Step 4 <i></i> About you</div>
+    <div class="row">
+      <label class="fld">Full name *
+        <input type="text" name="name" placeholder="Your name" autocomplete="name" required>
+      </label>
+      <label class="fld">Organisation <span style="color:var(--muted)">(optional)</span>
+        <input type="text" name="org" placeholder="Company or university" autocomplete="organization">
+      </label>
+    </div>
+    <p class="err" id="e-name">Please tell us your name.</p>
+
+    <div class="row" style="margin-top:14px">
+      <label class="fld">Location *
+        <select name="country" id="country" required autocomplete="country-name">
+          <option value="">Select your country…</option>
+        </select>
+      </label>
+      <label class="fld">Best way to reach me *
+        <select name="reach" id="reach">
+          <option value="Email" selected>Email</option>
+          <option value="Phone">Phone / WhatsApp</option>
+        </select>
+      </label>
+    </div>
+    <p class="err" id="e-country">Please select your country.</p>
+
+    <div style="margin-top:14px">
+      <label class="fld" id="wrap-email">Email address *
+        <input type="email" name="email" id="email" placeholder="you@email.com" autocomplete="email">
+      </label>
+      <label class="fld" id="wrap-phone" hidden>Phone number *
+        <span class="phone">
+          <span class="dial" id="dial" aria-hidden="true">—</span>
+          <input type="tel" name="phone" id="phone" placeholder="70 123 456" autocomplete="tel-national" inputmode="tel">
+        </span>
+      </label>
+      <p class="err" id="e-contact">Please provide a valid contact.</p>
+    </div>
+
+    <div class="step">Step 5 <i></i> Your situation</div>
+    <label class="fld">
+      <textarea name="notes" placeholder="A few lines on what you're facing and what a good outcome looks like."></textarea>
+    </label>
+
+    <div class="actions noprint">
+      <button type="button" class="btn2" id="btnPdf">Save as PDF</button>
+      <button type="button" class="btn" id="btnSend">Send request (PDF attached) →</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+
+  <div class="sheetwrap" data-reveal>
+    <div class="sheet" id="sheet">
+      <div class="sh">
+        <div class="brand">
+          <svg viewBox="0 0 40 40" fill="none" style="width:22px;height:22px" aria-hidden="true"><path d="M20 3 L24 28 H16 Z" fill="#C7A14E"/><circle cx="20" cy="8" r="3.2" fill="#E6CC8C"/><rect x="13" y="30" width="14" height="6" rx="1.5" fill="#C7A14E"/></svg>
+          Manara
+        </div>
+        <div class="ref"><b id="sRef">CR-000000-0000</b><span id="sDate">—</span></div>
+      </div>
+      <h2>Consultation request</h2>
+      <div class="sub">Submitted to Manara Consultancy for review</div>
+      <dl>
+        <dt>Practice</dt><dd id="sPractice">Advisory</dd>
+        <dt>Services</dt><dd id="sServices" class="dim">None selected yet</dd>
+        <dt>Name</dt><dd id="sName" class="dim">—</dd>
+        <dt>Organisation</dt><dd id="sOrg" class="dim">—</dd>
+        <dt>Location</dt><dd id="sCountry" class="dim">—</dd>
+        <dt>Reach me by</dt><dd id="sReach">Email</dd>
+        <dt>Contact</dt><dd id="sContact" class="dim">—</dd>
+        <dt>Timeline</dt><dd id="sTimeline">Within a month</dd>
+        <dt>Budget</dt><dd id="sBudget">Prefer to discuss</dd>
+        <dt>Situation</dt><dd id="sNotes" class="dim">—</dd>
+      </dl>
+      <div class="foot">
+        A lighthouse never chases the ship.<br>
+        manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online
+      </div>
+    </div>
+  </div>
+</form>
+</main>
+
+<footer><div class="fin"><span>© 2026 Manara Consultancy. All rights reserved.</span><span>Beirut · London · New York · Toronto · Dubai</span></div></footer>
+
+<script src="assets/js/countries.js?v=1" defer></script>
+<script src="assets/js/manara-ui.js?v=3" defer></script>
+<script src="scenes.js?v=12" defer></script>
+<script src="assets/js/consultation.js?v=1" defer></script>
+</body></html>

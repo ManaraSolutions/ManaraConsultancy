@@ -444,6 +444,144 @@
     sea(t, HZ + 24, 16, 1.5);
   };
 
+  // warm sun sinking into the sea, layered cloud bands and a rippling sun-path
+  SC.sunset = function (t) {
+    ctx.save();
+    // graded sky: deep violet aloft, ember at the waterline
+    var sky = ctx.createLinearGradient(0, 0, 0, HZ + 20);
+    sky.addColorStop(0, 'rgba(28,22,52,.55)');
+    sky.addColorStop(0.45, 'rgba(122,62,86,.34)');
+    sky.addColorStop(0.78, 'rgba(214,112,66,.30)');
+    sky.addColorStop(1, 'rgba(248,170,96,.34)');
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, HZ + 20);
+
+    var sunY = HZ - 18 + Math.sin(t * 0.12) * 4;
+    ctx.globalCompositeOperation = 'lighter';
+    var halo = ctx.createRadialGradient(W * 0.5, sunY, 0, W * 0.5, sunY, 230);
+    halo.addColorStop(0, 'rgba(255,196,120,' + (0.30 + 0.05 * Math.sin(t * 0.8)) + ')');
+    halo.addColorStop(0.5, 'rgba(240,140,80,.10)');
+    halo.addColorStop(1, 'rgba(240,140,80,0)');
+    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(W * 0.5, sunY, 230, 0, 6.29); ctx.fill();
+    // the disc, clipped where it meets the horizon
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, HZ + 2); ctx.clip();
+    var disc = ctx.createRadialGradient(W * 0.5, sunY, 0, W * 0.5, sunY, 46);
+    disc.addColorStop(0, 'rgba(255,236,190,.95)'); disc.addColorStop(1, 'rgba(255,170,90,.55)');
+    ctx.fillStyle = disc; ctx.beginPath(); ctx.arc(W * 0.5, sunY, 46, 0, 6.29); ctx.fill();
+    ctx.restore();
+    ctx.restore();
+
+    // drifting cloud bands crossing the disc
+    ctx.save();
+    for (var c = 0; c < 5; c++) {
+      var cw = 190 + c * 46;
+      var cx = ((c / 5) * (W + 420) + t * (5 + c * 2.4)) % (W + 420) - 210;
+      var cy = HZ - 150 + c * 26 + Math.sin(t * 0.3 + c) * 4;
+      ctx.fillStyle = 'rgba(48,30,44,' + (0.20 - c * 0.025) + ')';
+      ctx.beginPath(); ctx.ellipse(cx, cy, cw, 12 + c * 2, 0, 0, 6.29); ctx.fill();
+      ctx.fillStyle = 'rgba(255,180,110,' + (0.05 - c * 0.008) + ')';
+      ctx.beginPath(); ctx.ellipse(cx, cy + 3, cw * 0.8, 4, 0, 0, 6.29); ctx.fill();
+    }
+    ctx.restore();
+
+    drawStars(t, 0.18);
+    sea(t, HZ, 6, 0.5, 'rgba(70,42,48,.55)');
+
+    // shimmering sun-path: many short, jittered glints that widen with distance
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < 34; i++) {
+      var f = i / 34;
+      var yy = HZ + 4 + f * (H - HZ) * 0.62;
+      var spread = 8 + f * f * 130;
+      var glints = 1 + (i % 3);
+      for (var k = 0; k < glints; k++) {
+        var jitter = Math.sin(t * 2.2 + i * 1.7 + k * 2.3);
+        var cx = W * 0.5 + jitter * spread * 0.55;
+        var len = (14 + f * 46) * (0.5 + 0.5 * Math.abs(Math.cos(t * 1.6 + i + k)));
+        ctx.fillStyle = 'rgba(255,196,130,' + (0.16 * (1 - f) * (0.45 + 0.55 * Math.abs(jitter))) + ')';
+        ctx.fillRect(cx - len / 2, yy, len, 1.6 + f * 1.6);
+      }
+    }
+    ctx.restore();
+    drawGulls(t * 0.45);
+  };
+
+  // one aurora band, drawn as dense overlapping vertical curtains so the edges
+  // feather out. `dir` = 1 draws downward (sky), -1 mirrors it (reflection).
+  // `wob` adds a horizontal water-ripple displacement, `fade` scales opacity.
+  function auroraBand(t, b, originY, dir, fade, wob, cw, step) {
+    cw = cw || 13;
+    step = step || 7;
+    var hue = b === 0 ? '120,210,180' : (b === 1 ? '150,190,230' : '210,180,140');
+    var peak = (0.15 + 0.05 * Math.sin(t * 0.5 + b)) * fade;
+    var offY = 120 + b * 58;
+    // step 7 with width 13 keeps columns overlapping (no moiré) at ~half the
+    // per-frame gradient allocations of a finer step
+    for (var x = -8; x <= W; x += step) {
+      var lift = Math.sin(x / 190 + t * 0.32 + b * 1.7) * 30 + Math.sin(x / 70 - t * 0.5 + b) * 9;
+      var hgt = 78 + Math.sin(x / 110 + t * 0.4 + b) * 26;
+      // slow, long-wavelength ripple so the curtain breathes instead of striping
+      var a = peak * (0.6 + 0.4 * Math.sin(x / 130 + t * 0.9 + b * 2.1));
+      if (a <= 0.002) continue;
+      var top = originY + dir * (offY + lift);
+      var y0 = dir > 0 ? top - 30 : top - hgt;
+      var xw = wob ? x + Math.sin(x / 34 + t * 1.9 + b) * wob : x;
+      var cg = ctx.createLinearGradient(0, y0, 0, y0 + hgt + 30);
+      var stopA = dir > 0 ? 0.4 : 0.6;
+      cg.addColorStop(0, 'rgba(' + hue + ',0)');
+      cg.addColorStop(stopA, 'rgba(' + hue + ',' + a + ')');
+      cg.addColorStop(1, 'rgba(' + hue + ',0)');
+      ctx.fillStyle = cg;
+      ctx.fillRect(xw, y0, cw, hgt + 30);
+    }
+  }
+
+  // slow aurora ribbons over a calm sea, mirrored in the water — the AI scene
+  SC.aurora = function (t) {
+    drawStars(t, 0.85);
+    var horizon = HZ + 30;
+
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    // sky bands keep the fine 13px/7px columns — coarser steps show seams
+    for (var b = 0; b < 3; b++) auroraBand(t, b, 0, 1, 1, 0);
+    ctx.restore();
+
+    // Reflection: a true mirror of a high aurora would land far below the
+    // viewport, so flip about the horizon and compress vertically (scale -k).
+    // Clipped to the water so it can never bleed back into the sky.
+    // K keeps the mirrored bands hugging the horizon; wider columns hide the
+    // per-column seams that the dimmer reflection would otherwise reveal.
+    var K = 0.17;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, horizon, W, H - horizon); ctx.clip();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.translate(0, horizon); ctx.scale(1, -K); ctx.translate(0, -horizon);
+    // 22px columns on a 14px step still overlap, at half the gradient count
+    for (var b2 = 0; b2 < 3; b2++) auroraBand(t, b2, 0, 1, 0.5, 10, 22, 14);
+    ctx.restore();
+
+    // wave crests ride over the reflection
+    sea(t, horizon, 7, 0.55, 'rgba(16,36,54,.42)');
+
+    // extra ripple lines catching the aurora light
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < 9; i++) {
+      var f = i / 9;
+      var yy = horizon + 10 + f * (H - horizon) * 0.7;
+      ctx.strokeStyle = 'rgba(150,205,200,' + (0.08 * (1 - f)) + ')';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (var x2 = 0; x2 <= W; x2 += 14) {
+        var wy = yy + Math.sin(x2 / (70 + i * 12) + t * (0.7 + f)) * (2 + f * 5);
+        if (x2 === 0) ctx.moveTo(x2, wy); else ctx.lineTo(x2, wy);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    lighthouse(W * 0.82, horizon + 4, 0.9, t, false);
+  };
+
   var draw = SC[scene] || SC.stars;
   var t0 = performance.now();
   function frame(now) {

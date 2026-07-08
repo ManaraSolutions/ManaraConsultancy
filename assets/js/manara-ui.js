@@ -82,6 +82,25 @@
     });
   }
 
+  // ---- LinkedIn link in the footer (bundled pages get this from manara-overlay.js) ----
+  (function injectFooterSocial() {
+    var fin = document.querySelector('footer .fin');
+    if (!fin || fin.querySelector('[data-manara-li]')) return;
+    var a = document.createElement('a');
+    a.href = 'https://www.linkedin.com/in/manara-consultancy-lebanon/';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.setAttribute('data-manara-li', '1');
+    a.setAttribute('aria-label', 'Manara Consultancy on LinkedIn');
+    a.title = 'Manara Consultancy on LinkedIn';
+    a.className = 'foot-li';
+    a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '<path d="M4.98 3.5a2.5 2.5 0 1 1-.02 5.001A2.5 2.5 0 0 1 4.98 3.5zM3 8.98h4v12.02H3V8.98zM9.5 8.98h3.83v1.64h.05' +
+      'c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.44 4.78 5.61V21h-4v-5.7c0-1.36-.03-3.1-1.9-3.1-1.9 0-2.19 1.47-2.19 2.99V21h-4V8.98z"/>' +
+      '</svg><span>LinkedIn</span>';
+    fin.appendChild(a);
+  })();
+
   // ---- surface the About page in shared chrome (header, footer, explore lists) ----
   (function injectAbout() {
     var onAbout = /\/about\.html$/.test(location.pathname);

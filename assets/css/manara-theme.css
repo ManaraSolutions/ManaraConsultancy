@@ -115,6 +115,38 @@ ul.plain li{margin-top:9px}
 .xl strong{font-family:"Cormorant Garamond",serif;font-size:19px;font-weight:600}
 .xl span{font-size:12.5px;color:var(--muted)}
 
+/* ---------- footer social ---------- */
+.foot-li{display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;transition:color .25s}
+.foot-li:hover,.foot-li:focus-visible{color:var(--gold-light)}
+
+/* ---------- further reading (external sources) ---------- */
+.reads{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:14px;margin-top:26px}
+.rd{position:relative;overflow:hidden;isolation:isolate;border:1px solid rgba(var(--cream-rgb),.15);border-radius:var(--radius-sm);padding:20px 22px;
+  background:linear-gradient(160deg,rgba(var(--cream-rgb),.05),rgba(12,26,42,.55) 62%);
+  backdrop-filter:blur(14px) saturate(130%);-webkit-backdrop-filter:blur(14px) saturate(130%);
+  box-shadow:0 1px 0 rgba(var(--cream-rgb),.06) inset,0 20px 40px -30px rgba(0,0,0,.7);
+  display:flex;flex-direction:column;gap:8px;
+  transition:transform .38s var(--ease-out),border-color .38s,box-shadow .38s}
+.rd:hover,.rd:focus-visible{transform:translateY(-5px);border-color:rgba(var(--gold-rgb),.55);
+  box-shadow:0 1px 0 rgba(var(--cream-rgb),.09) inset,0 28px 56px -26px rgba(var(--gold-rgb),.3)}
+/* light sweeps across the glass on hover */
+.rd::before{content:"";position:absolute;inset:0;z-index:-1;transform:translateX(-110%);
+  background:linear-gradient(105deg,transparent 35%,rgba(var(--gold-light-rgb),.14) 50%,transparent 65%);
+  transition:transform .75s var(--ease-out)}
+.rd:hover::before,.rd:focus-visible::before{transform:translateX(110%)}
+.rd .src{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+  font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold-light);background:rgba(var(--gold-rgb),.13);
+  border:1px solid rgba(var(--gold-rgb),.3);border-radius:999px;padding:5px 11px}
+.rd strong{font-family:"Cormorant Garamond",serif;font-size:19.5px;font-weight:600;line-height:1.22;text-wrap:balance}
+.rd .rd-note{font-size:12.5px;color:var(--muted);line-height:1.5}
+.rd .go{margin-top:auto;padding-top:4px;font-size:12px;font-weight:600;color:var(--gold-light);
+  display:inline-flex;align-items:center;gap:6px}
+.rd .go svg{transition:transform .32s var(--ease-out)}
+.rd:hover .go svg{transform:translate(3px,-3px)}
+.reads-note{font-size:12px;color:var(--muted);margin-top:14px;font-style:italic}
+@media (prefers-reduced-motion:reduce){.rd,.rd::before,.rd .go svg{transition:none}}
+
 /* ---------- accordion ---------- */
 details{border:1px solid rgba(var(--cream-rgb),.15);border-radius:var(--radius-sm);background:rgba(12,26,42,.55);backdrop-filter:blur(10px);margin-top:10px;overflow:hidden}
 summary{cursor:pointer;padding:18px 22px;font-weight:600;font-size:15.5px;list-style:none;position:relative;padding-right:44px}
