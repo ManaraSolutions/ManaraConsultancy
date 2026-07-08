@@ -30,7 +30,18 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{
+  scroll-behavior:smooth;
+  /* iOS Safari inflates font sizes on its own ("text autosizing") whenever it
+     decides a column is narrow — it silently rescales type and breaks the
+     layout. Chromium ignores this property, which is why the bug is invisible
+     on desktop. Pin it to 100% so our type scale is the only one. */
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  /* iOS only honours overflow-x:hidden when it is on the scrolling element
+     (html). On body alone the page still pans sideways. */
+  overflow-x:hidden;
+}
 body{
   background:var(--navy-deep);
   color:var(--cream);
@@ -196,6 +207,25 @@ footer{border-top:1px solid rgba(var(--cream-rgb),.12);padding:34px 0;position:r
 /* ---------- accessibility ---------- */
 a:focus-visible,button:focus-visible,summary:focus-visible,.btn:focus-visible,.btn2:focus-visible,.chip:focus-visible{
   outline:2px solid var(--gold-light);outline-offset:3px;border-radius:4px;
+}
+
+/* ---------- small screens: legible type + breathing room ----------
+   Wide letter-spacing at 10–12px is close to unreadable on a phone held at
+   arm's length. Give the micro-labels a floor, tighten their tracking (the
+   two together are what makes them hard to read), and stop long strings like
+   emails and URLs from forcing a sideways pan. */
+@media (max-width: 640px){
+  .eyebrow{font-size:12.5px;letter-spacing:.2em;gap:10px}
+  .meta{font-size:13.5px}
+  .stat-label{font-size:12.5px;letter-spacing:.04em}
+  .fin{font-size:13px;justify-content:flex-start;gap:8px}
+  .rd .src{font-size:11.5px;letter-spacing:.1em}
+  .chip{font-size:13.5px}
+  .wrap{padding:0 20px}
+  /* long unbroken strings must wrap rather than widen the page */
+  p,li,td,th,figcaption,.secp,.rd strong,.fin span{overflow-wrap:anywhere}
+  /* comfortable tap targets */
+  .chip,.btn,.btn2,.back{min-height:44px;display:inline-flex;align-items:center}
 }
 
 @media (prefers-reduced-motion: reduce){

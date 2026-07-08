@@ -6,8 +6,37 @@
    beats a plain inline style — this is standard CSS cascade behavior,
    not a hack). Only touches broad, stable hooks (tag/attribute selectors,
    the handful of real classes the runtime emits) — never the numbered
-   scp*/dc-tpl* internals, which are compiler output and may change on
-   any rebuild. Nothing here touches JS, the manifest, or app logic. */
+   scp / dc-tpl internals, which are compiler output and may change on
+   any rebuild. Nothing here touches JS, the manifest, or app logic.
+
+   NB: never write a literal star-slash inside this comment — it closes the
+   comment early and the parser then eats the first rule that follows. */
+
+/* ---- iOS Safari corrections (these pages don't load manara-theme.css) ----
+   1. Safari "text autosizing" rescales type on its own in narrow columns and on
+      rotation, which is what makes these sections read at the wrong size on an
+      iPhone while looking correct in Chrome (Chromium ignores the property).
+   2. overflow-x:hidden only clips on iOS when it sits on the scrolling element. */
+html{
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  overflow-x: hidden !important;
+}
+body{ overflow-x: hidden !important; }
+
+/* Micro-labels the template inline-styles at 10.5–12px with very wide tracking.
+   At phone size the tracking is what kills legibility, so raise the floor and
+   tighten it. Only on small screens; desktop keeps the intended look. */
+@media (max-width: 640px){
+  [style*="font-size: 10.5px"]{ font-size: 12px !important; letter-spacing: .08em !important; }
+  [style*="font-size: 11px"]  { font-size: 12.5px !important; letter-spacing: .1em !important; }
+  [style*="font-size: 11.5px"]{ font-size: 12.5px !important; letter-spacing: .1em !important; }
+  [style*="font-size: 12px"]  { font-size: 12.5px !important; letter-spacing: .16em !important; }
+  /* emails / URLs must wrap rather than pan the page sideways */
+  p, li, td, th, span, div[style*="font-size"]{ overflow-wrap: anywhere; }
+  /* the notch: keep content clear of the safe area (viewport-fit=cover) */
+  body{ padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+}
 
 /* ---- responsive-grid overflow fix ----
    The template emits `repeat(auto-fit, minmax(NNNpx, 1fr))` inline. A bare
@@ -135,14 +164,269 @@ div[style*="z-index: 80"] > div[style*="border-radius: 24px"]{
 .nav-main a[data-manara-about]{ transition: color .25s; }
 .nav-main a[data-manara-about]:hover{ color: #E6CC8C !important; }
 
-/* ---- AI agent chat panel + floating launcher buttons ---- */
-.chat-panel{
-  background: rgba(10,19,31,.78) !important;
-  backdrop-filter: blur(22px) saturate(150%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
-  border: 1px solid rgba(230,204,140,.35) !important;
-  box-shadow: 0 1px 0 rgba(244,238,225,.08) inset, 0 34px 80px -28px rgba(0,0,0,.85), 0 0 40px -18px rgba(199,161,78,.35) !important;
+/* ---- the lighthouse keeper (replaces the pirate face) ----
+   transform-box:view-box lets every transform-origin below be written in the
+   SVG's own 48x72 coordinates instead of pixels of the rendered element. */
+.mnr-keeper{ overflow: visible; }
+.mnr-keeper *{ transform-box: view-box; }
+
+/* the button's compiled inline style still carries the old `pirateJump` hop,
+   which fights the keeper's own motion */
+button[aria-label*="keeper"]{ animation: none !important; }
+
+.mnr-keeper .k-figure{ transform-origin: 24px 66px; }
+.mnr-keeper .k-arm-wave{ transform-origin: 17.4px 28.4px; }
+.mnr-keeper .k-arm-lantern{ transform-origin: 30.6px 28.4px; }
+.mnr-keeper .k-leg-l{ transform-origin: 20.3px 43px; }
+.mnr-keeper .k-leg-r{ transform-origin: 27.7px 43px; }
+.mnr-keeper .k-shin-l{ transform-origin: 20.3px 54.5px; }
+.mnr-keeper .k-shin-r{ transform-origin: 27.7px 54.5px; }
+.mnr-keeper .k-glow{ transform-origin: 36px 30.2px; }
+.mnr-keeper .k-stool{ opacity: 0; transition: opacity .35s ease; }
+/* poses ease between one another; the walk cycle overrides these per-frame */
+.mnr-keeper .k-figure,
+.mnr-keeper .k-leg,
+.mnr-keeper .k-shin,
+.mnr-keeper .k-arm-lantern,
+.mnr-keeper .k-shadow{ transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+
+/* the lantern never stops burning */
+@keyframes kFlicker{
+  0%,100%{ opacity: .72; transform: scale(.97); }
+  42%{ opacity: 1; transform: scale(1.04); }
+  68%{ opacity: .6; transform: scale(.95); }
 }
+.mnr-keeper .k-glow{ animation: kFlicker 2.6s ease-in-out infinite; }
+/* the hot core breathes with the halo, a touch out of phase */
+.mnr-keeper .k-core{ transform-origin: 36px 30.2px; animation: kFlicker 1.7s ease-in-out infinite; }
+
+/* standing */
+@keyframes kSway{ 0%,100%{ transform: rotate(-1.3deg); } 50%{ transform: rotate(1.3deg); } }
+.mnr-keeper.is-idle .k-figure,
+.mnr-keeper.is-wave .k-figure,
+.mnr-keeper:not(.is-walk):not(.is-sit) .k-figure{ animation: kSway 4.6s ease-in-out infinite; }
+
+/* waving: the free hand goes up and back twice */
+@keyframes kWave{
+  0%,100%{ transform: rotate(0deg); }
+  18%{ transform: rotate(-28deg); }
+  38%{ transform: rotate(4deg); }
+  58%{ transform: rotate(-24deg); }
+  78%{ transform: rotate(2deg); }
+}
+.mnr-keeper.is-wave .k-arm-wave{ animation: kWave 1.15s ease-in-out 2; }
+
+/* walking: legs alternate, body bobs, and he paces across a little */
+@keyframes kStepA{ 0%,100%{ transform: rotate(15deg); } 50%{ transform: rotate(-15deg); } }
+@keyframes kStepB{ 0%,100%{ transform: rotate(-15deg); } 50%{ transform: rotate(15deg); } }
+@keyframes kShinA{ 0%,100%{ transform: rotate(-4deg); } 55%{ transform: rotate(16deg); } }
+@keyframes kShinB{ 0%,100%{ transform: rotate(16deg); } 55%{ transform: rotate(-4deg); } }
+@keyframes kBob{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-1.1px); } }
+@keyframes kSwing{ 0%,100%{ transform: rotate(-5deg); } 50%{ transform: rotate(5deg); } }
+@keyframes kPace{ 0%,100%{ transform: translateX(-5px); } 50%{ transform: translateX(5px); } }
+.mnr-keeper.is-walk{ animation: kPace 5.2s ease-in-out; }
+.mnr-keeper.is-walk .k-figure{ animation: kBob .5s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-leg-l{ animation: kStepA 1s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-leg-r{ animation: kStepB 1s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-shin-l{ animation: kShinA 1s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-shin-r{ animation: kShinB 1s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-arm-wave{ animation: kSwing 1s ease-in-out infinite; }
+.mnr-keeper.is-walk .k-arm-lantern{ animation: kSwing 1s ease-in-out infinite reverse; }
+
+/* sitting: hips drop onto the stool, knees fold forward */
+.mnr-keeper.is-sit .k-stool{ opacity: 1; }
+.mnr-keeper.is-sit .k-figure{ transform: translateY(6.5px); }
+.mnr-keeper.is-sit .k-leg-l{ transform: rotate(-72deg); }
+.mnr-keeper.is-sit .k-leg-r{ transform: rotate(-68deg); }
+.mnr-keeper.is-sit .k-shin-l{ transform: rotate(72deg); }
+.mnr-keeper.is-sit .k-shin-r{ transform: rotate(68deg); }
+.mnr-keeper.is-sit .k-arm-lantern{ transform: rotate(6deg); }
+.mnr-keeper.is-sit .k-shadow{ transform: scaleX(.82); }
+
+@media (prefers-reduced-motion: reduce){
+  .mnr-keeper *{ animation: none !important; transition: none !important; }
+}
+
+/* ======================================================================
+   "Marsa" — the harbour beacon (the AI agent)
+   A Fresnel optic that sweeps, breathes and stands in water, plus a panel
+   restyled as a signal station. Injected by manara-agent.js.
+   ====================================================================== */
+
+.mnr-beacon{ display: block; overflow: visible; }
+.mnr-beacon *{ transform-box: view-box; }
+.mnr-beacon-lg{ width: 38px; height: 38px; }
+.mnr-beacon-sm{ width: 34px; height: 34px; flex: 0 0 auto; }
+
+@keyframes mbSweep{ to{ transform: rotate(360deg); } }
+@keyframes mbOrbit{ to{ transform: rotate(-360deg); } }
+@keyframes mbCore{
+  0%,100%{ transform: scale(.92); opacity: .82; }
+  45%{ transform: scale(1.12); opacity: 1; }
+  70%{ transform: scale(.97); opacity: .7; }
+}
+@keyframes mbHalo{ 0%,100%{ opacity: .55; } 50%{ opacity: 1; } }
+@keyframes mbRipple{
+  0%,100%{ transform: translateX(-2px) scaleY(1); }
+  50%{ transform: translateX(2px) scaleY(.72); }
+}
+
+.mnr-beacon .b-sweep{ transform-origin: 24px 23px; animation: mbSweep 7s linear infinite; }
+.mnr-beacon .b-orbit{ transform-origin: 24px 23px; animation: mbOrbit 18s linear infinite; }
+.mnr-beacon .b-core{ transform-origin: 24px 23px; animation: mbCore 2.3s ease-in-out infinite; }
+.mnr-beacon .b-halo{ transform-origin: 24px 23px; animation: mbHalo 3.4s ease-in-out infinite; }
+.mnr-beacon .b-r1{ transform-origin: 24px 44.6px; animation: mbRipple 3.2s ease-in-out infinite; }
+
+/* ---- the launcher ---- */
+button.scpf.mnr-launch{
+  position: relative;
+  width: 62px !important; height: 62px !important;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(230,204,140,.16), rgba(10,19,31,.94) 60%) !important;
+  border: 1px solid rgba(230,204,140,.55) !important;
+  box-shadow: 0 0 0 1px rgba(6,13,22,.6), 0 18px 40px -16px rgba(0,0,0,.85),
+              0 0 34px -8px rgba(199,161,78,.5) !important;
+}
+/* two rings pulse outward, like a signal going out over water */
+@keyframes mbPing{
+  0%{ transform: scale(.92); opacity: .55; }
+  100%{ transform: scale(1.9); opacity: 0; }
+}
+button.scpf.mnr-launch::before,
+button.scpf.mnr-launch::after{
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid rgba(230,204,140,.45); pointer-events: none;
+  animation: mbPing 3.4s cubic-bezier(.2,.7,.2,1) infinite;
+}
+button.scpf.mnr-launch::after{ animation-delay: 1.7s; }
+button.scpf.mnr-launch:hover{ transform: translateY(-3px) scale(1.05) !important; }
+button.scpf.mnr-launch:hover .b-sweep{ animation-duration: 2.4s; }
+
+/* the one-time invitation beside the launcher */
+.mnr-hint{
+  position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%);
+  white-space: nowrap; font-size: 12.5px; letter-spacing: .04em; color: #EBE2CF;
+  background: rgba(10,19,31,.92); border: 1px solid rgba(230,204,140,.35);
+  padding: 7px 12px; border-radius: 999px; pointer-events: none;
+  box-shadow: 0 12px 30px -14px rgba(0,0,0,.8);
+  animation: mbHintIn .5s .8s both, mbHintFloat 3.6s 1.3s ease-in-out infinite;
+}
+@keyframes mbHintIn{ from{ opacity: 0; transform: translate(8px,-50%); } to{ opacity: 1; transform: translate(0,-50%); } }
+@keyframes mbHintFloat{ 0%,100%{ transform: translate(0,-50%); } 50%{ transform: translate(-3px,-50%); } }
+@media (max-width: 640px){ .mnr-hint{ display: none; } }
+
+/* ---- the panel: a signal station ---- */
+@keyframes mbRise{
+  from{ opacity: 0; transform: translateY(20px) scale(.97); }
+  to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-panel{
+  /* .80 let the hero's clocks read straight through the glass wherever a browser
+     declines to composite backdrop-filter. Message legibility beats translucency. */
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(199,161,78,.10), transparent 60%),
+    rgba(9,17,28,.97) !important;
+  backdrop-filter: blur(24px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(155%) !important;
+  border: 1px solid rgba(230,204,140,.38) !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 0 rgba(244,238,225,.09) inset, 0 40px 90px -30px rgba(0,0,0,.9),
+              0 0 46px -18px rgba(199,161,78,.4) !important;
+  animation: mbRise .42s cubic-bezier(.2,.7,.2,1);
+}
+/* a beam crosses the panel each time it opens, then settles */
+@keyframes mbSweepBar{
+  0%{ transform: translateX(-120%); opacity: 0; }
+  25%{ opacity: 1; }
+  100%{ transform: translateX(120%); opacity: 0; }
+}
+.mnr-sweep{
+  position: absolute; top: 0; left: 0; right: 0; height: 78px; pointer-events: none; z-index: 2;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,232,168,.16) 50%, transparent 70%);
+  animation: mbSweepBar 2.6s cubic-bezier(.2,.7,.2,1) .25s 1;
+}
+.mnr-agent .mnr-head{ position: relative; z-index: 3; }
+
+/* live "on watch" pip */
+@keyframes mbPip{ 0%,100%{ box-shadow: 0 0 0 0 rgba(143,227,176,.55); } 70%{ box-shadow: 0 0 0 5px rgba(143,227,176,0); } }
+.mnr-status{
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: #8fe3b0; margin-right: 7px; vertical-align: middle;
+  animation: mbPip 2.4s ease-out infinite;
+}
+
+/* ---- messages ---- */
+.mnr-msgs{ scrollbar-width: thin; scrollbar-color: rgba(199,161,78,.45) transparent; }
+.mnr-msgs::-webkit-scrollbar{ width: 6px; }
+.mnr-msgs::-webkit-scrollbar-thumb{ background: rgba(199,161,78,.4); border-radius: 999px; }
+@keyframes mbMsgIn{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: none; } }
+.mnr-msgs > div{ animation: mbMsgIn .35s cubic-bezier(.2,.7,.2,1); }
+
+/* the agent speaks from the light: a gold edge and a warm wash */
+.mnr-msgs > div[style*="align-items: flex-start"] > div[style*="border-radius: 14px"]{
+  background: linear-gradient(150deg, rgba(230,204,140,.12), rgba(244,238,225,.04) 60%) !important;
+  border-color: rgba(230,204,140,.3) !important;
+  border-left: 2px solid rgba(230,204,140,.65) !important;
+  box-shadow: 0 10px 26px -18px rgba(0,0,0,.8), 0 0 22px -14px rgba(199,161,78,.6) !important;
+}
+/* the visitor speaks back in gold */
+.mnr-msgs > div[style*="align-items: flex-end"] > div[style*="border-radius: 14px"]{
+  background: linear-gradient(150deg, rgba(199,161,78,.9), rgba(138,109,43,.85)) !important;
+  color: #0C1A2A !important;
+  border-color: rgba(230,204,140,.5) !important;
+  box-shadow: 0 12px 28px -18px rgba(199,161,78,.9) !important;
+}
+
+/* ---- suggested prompts (the POC's whole point) ---- */
+.mnr-prompts{
+  display: flex; gap: 7px; flex-wrap: wrap;
+  padding: 0 14px 12px; position: relative; z-index: 2;
+  transition: opacity .35s ease, max-height .4s ease;
+  max-height: 140px;
+}
+.mnr-prompts.is-spent{ opacity: 0; max-height: 0; padding-bottom: 0; pointer-events: none; }
+.mnr-chip{
+  font: 500 12px/1 Archivo, system-ui, sans-serif; letter-spacing: .01em;
+  color: #EBE2CF; cursor: pointer; white-space: nowrap;
+  background: rgba(244,238,225,.05);
+  border: 1px solid rgba(230,204,140,.32); border-radius: 999px;
+  padding: 8px 12px;
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .25s, background .25s, color .25s;
+}
+.mnr-chip:hover{
+  transform: translateY(-2px);
+  background: rgba(199,161,78,.16); border-color: rgba(230,204,140,.7); color: #FFF4DA;
+}
+.mnr-chip:focus-visible{ outline: 2px solid #E6CC8C; outline-offset: 2px; }
+
+/* ---- composer ---- */
+.mnr-form{ position: relative; z-index: 2; background: rgba(6,13,22,.35); }
+.mnr-form input.scpb{
+  background: rgba(6,13,22,.6) !important;
+  border-color: rgba(230,204,140,.28) !important;
+  transition: border-color .25s, box-shadow .25s !important;
+}
+.mnr-form input.scpb:focus{
+  border-color: #C7A14E !important;
+  box-shadow: 0 0 0 3px rgba(199,161,78,.18) !important;
+  outline: none !important;
+}
+.mnr-form button.scph{
+  background: linear-gradient(145deg, #E6CC8C, #C7A14E) !important;
+  box-shadow: 0 10px 24px -12px rgba(199,161,78,.9) !important;
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s !important;
+}
+.mnr-form button.scph:hover{ transform: translateY(-2px) scale(1.05) !important; }
+.mnr-form button.scph:active{ transform: scale(.94) !important; }
+.mnr-form button.scph svg{ filter: drop-shadow(0 1px 1px rgba(12,26,42,.35)); }
+
+@media (prefers-reduced-motion: reduce){
+  .mnr-beacon *, .mnr-sweep, .chat-panel, .mnr-status,
+  button.scpf.mnr-launch::before, button.scpf.mnr-launch::after,
+  .mnr-hint, .mnr-msgs > div{ animation: none !important; }
+}
+
+/* ---- floating launcher buttons ---- */
 @keyframes manaraFloatBtn{
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-5px); }

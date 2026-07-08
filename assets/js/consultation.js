@@ -223,12 +223,28 @@
     return libPromise;
   }
 
+  /* html2canvas offsets its capture by the *live page's* scroll position. The
+     sheet sits far down the page, so once the user has scrolled to reach the
+     buttons the whole subtree is painted outside the canvas bounds and the PDF
+     comes out as an empty navy rectangle (the background colour is still filled,
+     which is why it looked "blank" rather than broken).
+
+     Pinning scrollX/scrollY to 0 and stating the window size explicitly makes the
+     capture independent of where the reader happens to be scrolled. */
   function pdfOptions(el) {
     return {
       margin: 0,
       filename: 'Manara-Consultation-' + REF + '.pdf',
       image: { type: 'jpeg', quality: 0.96 },
-      html2canvas: { scale: 2, backgroundColor: '#0C1A2A', useCORS: true },
+      html2canvas: {
+        scale: 2,
+        backgroundColor: '#0C1A2A',
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight
+      },
       jsPDF: { unit: 'px', format: [816, Math.max(el.scrollHeight + 80, 1056)], orientation: 'portrait' }
     };
   }

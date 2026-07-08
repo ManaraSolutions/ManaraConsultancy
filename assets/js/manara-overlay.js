@@ -6,7 +6,7 @@
    to a more detailed illustration. Purely additive — no app logic touched. */
 (function () {
   var CSS_ID = 'manara-overlay-css';
-  var CSS_HREF = 'assets/css/manara-overlay.css?v=11';
+  var CSS_HREF = 'assets/css/manara-overlay.css?v=20';
 
   function injectCss() {
     if (document.getElementById(CSS_ID)) return;
@@ -17,60 +17,158 @@
     (document.head || document.documentElement).appendChild(link);
   }
 
-  /* Refined sea-captain portrait (64x64) replacing the flat cartoon face:
-     weathered skin, grey beard, eyepatch, tricorn hat with gold trim. */
-  var CAPTAIN_SVG =
-    '<defs>' +
-    '<radialGradient id="mnrSkin" cx="45%" cy="35%" r="70%">' +
-    '<stop offset="0%" stop-color="#f2d4ac"/><stop offset="70%" stop-color="#dfb184"/><stop offset="100%" stop-color="#c69663"/>' +
-    '</radialGradient>' +
-    '<linearGradient id="mnrHat" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0%" stop-color="#2b4059"/><stop offset="100%" stop-color="#141f2c"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="mnrBeard" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0%" stop-color="#9a9186"/><stop offset="100%" stop-color="#5f574d"/>' +
-    '</linearGradient>' +
-    '<linearGradient id="mnrCoat" x1="0" y1="0" x2="0" y2="1">' +
-    '<stop offset="0%" stop-color="#22354c"/><stop offset="100%" stop-color="#101a26"/>' +
-    '</linearGradient>' +
-    '</defs>' +
-    '<ellipse cx="32" cy="58" rx="15" ry="3.4" fill="rgba(0,0,0,.28)"/>' +
-    '<path d="M15 58 Q22 46 32 46 Q42 46 49 58 Z" fill="url(#mnrCoat)"/>' +
-    '<path d="M28 47 L32 52 L36 47" fill="none" stroke="#C7A14E" stroke-width="1.1"/>' +
-    '<circle cx="32" cy="54.5" r="1" fill="#C7A14E"/>' +
-    '<circle cx="32" cy="34" r="13.5" fill="url(#mnrSkin)"/>' +
-    '<path d="M20.5 30 q-1.5 6 1.5 10" stroke="#b78c5e" stroke-width=".8" fill="none" opacity=".6"/>' +
-    '<path d="M43.5 30 q1.5 6 -1.5 10" stroke="#b78c5e" stroke-width=".8" fill="none" opacity=".6"/>' +
-    '<path d="M19 36 Q19.5 51 32 52.5 Q44.5 51 45 36 Q41 45 32 45 Q23 45 19 36 Z" fill="url(#mnrBeard)"/>' +
-    '<path d="M24 44 q1 4 3 6 M32 46 l0 5.5 M40 44 q-1 4 -3 6" stroke="#4c453c" stroke-width=".9" fill="none" opacity=".7"/>' +
-    '<path d="M26 40.5 q3 2.6 6 2.6 q3 0 6 -2.6" fill="none" stroke="#4a3423" stroke-width="1.4" stroke-linecap="round"/>' +
-    '<path d="M25.5 39 q3.2 -2 6.5 -.6 M38.5 39 q-3.2 -2 -6.5 -.6" stroke="#8a8378" stroke-width="1.6" fill="none" stroke-linecap="round"/>' +
-    '<path d="M31 30.5 q1.6 3.5 .2 5.5 q1.4 .9 2.6 .2" fill="none" stroke="#b58455" stroke-width="1.1" stroke-linecap="round"/>' +
-    '<path d="M17.5 29.5 L46.5 25.5" stroke="#171310" stroke-width="2.4" stroke-linecap="round"/>' +
-    '<ellipse cx="39" cy="29.6" rx="5" ry="4.5" fill="#171310"/>' +
-    '<path d="M36.2 27.4 q2.6 -1.4 5 0" stroke="#3d332a" stroke-width=".8" fill="none"/>' +
-    '<path d="M22.5 29.5 q3 -2.6 6.6 -.4 q-1.4 3 -3.6 3 q-2.2 0 -3 -2.6 Z" fill="#fdf6ea"/>' +
-    '<circle cx="26" cy="30" r="1.9" fill="#4c3319"/>' +
-    '<circle cx="26.6" cy="29.4" r=".6" fill="#fff"/>' +
-    '<path d="M21.5 26.5 q3.5 -2.2 7.5 -1" stroke="#6b5a45" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="45.8" cy="40.5" r="2" fill="none" stroke="#C7A14E" stroke-width="1.4"/>' +
-    '<path d="M10.5 23.5 Q32 4.5 53.5 23.5 L50 27.5 Q32 13.5 14 27.5 Z" fill="url(#mnrHat)"/>' +
-    '<path d="M14 27.5 Q32 13.5 50 27.5" fill="none" stroke="#C7A14E" stroke-width="1.4"/>' +
-    '<path d="M10.5 23.5 Q32 4.5 53.5 23.5" fill="none" stroke="#0c141d" stroke-width="1"/>' +
-    '<path d="M32 15.5 l1.1 2.3 2.5 .35 -1.8 1.75 .45 2.5 -2.25 -1.2 -2.25 1.2 .45 -2.5 -1.8 -1.75 2.5 -.35 Z" fill="#E6CC8C"/>' +
-    '<path d="M16 30 q-2 3 -1.5 6 M48 30 q2 3 1.5 6" stroke="#8a8378" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+  /* ---------------------------------------------------------------------
+     The lighthouse keeper: a full-body figure holding a lit lantern.
 
-  // matches the original aria-label and the reworded one below
-  var CAPTAIN_BTN = 'button[aria-label^="Another"][aria-label*="captain"]';
+     Drawn in a 48x72 viewBox. The old captain was 64x64, a head-and-shoulders
+     crop that simply has no room for legs. All motion is CSS, driven by a state
+     class on the <svg>: .is-idle, .is-walk, .is-sit, .is-wave. Groups carry
+     `transform-box: view-box` so transform-origin can be written in viewBox
+     units instead of pixels of the rendered box.
+
+     He sways while standing, strides and paces across while walking, folds onto
+     a stool when sitting, and raises his free hand to wave. The lantern flickers
+     throughout: it is the one thing that never stops.
+     --------------------------------------------------------------------- */
+  var KEEPER_SVG =
+    '<defs>' +
+    '<linearGradient id="kCoat" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#27405a"/><stop offset="1" stop-color="#0f1c2a"/></linearGradient>' +
+    '<radialGradient id="kSkin" cx="42%" cy="35%" r="70%">' +
+    '<stop offset="0" stop-color="#f0d0a8"/><stop offset="1" stop-color="#cf9f6f"/></radialGradient>' +
+    '<radialGradient id="kGlow">' +
+    '<stop offset="0" stop-color="rgba(255,228,155,.95)"/>' +
+    '<stop offset="45%" stop-color="rgba(255,205,110,.32)"/>' +
+    '<stop offset="100%" stop-color="rgba(255,200,110,0)"/></radialGradient>' +
+    '<linearGradient id="kGlass" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#fff5d6"/><stop offset="1" stop-color="#ffcf72"/></linearGradient>' +
+    '</defs>' +
+
+    '<ellipse class="k-shadow" cx="24" cy="68.6" rx="12.5" ry="2.3" fill="rgba(0,0,0,.34)"/>' +
+
+    '<g class="k-stool">' +
+    '<rect x="14.6" y="56.2" width="18.8" height="2.8" rx="1.2" fill="#26333f"/>' +
+    '<path d="M17.4 59 L16 67 M30.6 59 L32 67" stroke="#26333f" stroke-width="1.7" stroke-linecap="round"/>' +
+    '</g>' +
+
+    '<g class="k-figure">' +
+
+    '<g class="k-leg k-leg-l">' +
+    '<rect x="17.6" y="42.6" width="5.3" height="13.2" rx="2.6" fill="#16273a"/>' +
+    '<g class="k-shin k-shin-l">' +
+    '<rect x="17.9" y="54" width="4.7" height="11.4" rx="2.3" fill="#16273a"/>' +
+    '<rect x="16.4" y="63.6" width="7.5" height="4.2" rx="1.6" fill="#0e1a27"/>' +
+    '</g></g>' +
+    '<g class="k-leg k-leg-r">' +
+    '<rect x="25.1" y="42.6" width="5.3" height="13.2" rx="2.6" fill="#132234"/>' +
+    '<g class="k-shin k-shin-r">' +
+    '<rect x="25.4" y="54" width="4.7" height="11.4" rx="2.3" fill="#132234"/>' +
+    '<rect x="24.1" y="63.6" width="7.5" height="4.2" rx="1.6" fill="#0b1622"/>' +
+    '</g></g>' +
+
+    '<rect x="22.3" y="20.6" width="3.4" height="5.6" rx="1.5" fill="#cf9f6f"/>' +
+    '<path d="M16.5 26 Q24 22.6 31.5 26 L34 50.6 Q24 54.6 14 50.6 Z" fill="url(#kCoat)"/>' +
+    '<path d="M20.4 25.2 L24 30 L27.6 25.2" fill="none" stroke="rgba(230,204,140,.22)" stroke-width=".7"/>' +
+    '<path d="M24 24.6 L24 51.6" stroke="rgba(230,204,140,.26)" stroke-width=".8"/>' +
+    '<rect x="16.2" y="43.4" width="15.6" height="2.4" rx="1.1" fill="#C7A14E" opacity=".6"/>' +
+    '<circle cx="24" cy="44.6" r="1.05" fill="#E6CC8C"/>' +
+    '<path d="M18.6 25.7 Q24 28.7 29.4 25.7 L28.9 28.1 Q24 30.7 19.1 28.1 Z" fill="#7d2f2a"/>' +
+
+    '<g class="k-arm-lantern">' +
+    '<path d="M30.6 28.4 L35.6 21.6" stroke="#31506f" stroke-width="4.4" stroke-linecap="round"/>' +
+    '<circle cx="36" cy="20.9" r="2.3" fill="url(#kSkin)"/>' +
+    '<path d="M36 22.6 L36 25.4" stroke="#C7A14E" stroke-width="1"/>' +
+    '<g class="k-lantern">' +
+    '<circle class="k-glow" cx="36" cy="30.2" r="16" fill="url(#kGlow)"/>' +
+    '<path d="M32.9 25.4 h6.2 l.8 1.6 h-7.8 z" fill="#C7A14E"/>' +
+    '<rect x="33.2" y="27" width="5.6" height="6.4" fill="url(#kGlass)"/>' +
+    '<path d="M34.9 27 v6.4 M36.8 27 v6.4" stroke="rgba(120,80,20,.45)" stroke-width=".45"/>' +
+    '<rect x="32.6" y="33.4" width="6.8" height="1.7" rx=".7" fill="#C7A14E"/>' +
+    '<circle class="k-core" cx="36" cy="30.2" r="2.6" fill="rgba(255,246,214,.95)"/>' +
+    '</g></g>' +
+
+    '<g class="k-arm-wave">' +
+    '<path d="M17.4 28.4 L12.4 20.8" stroke="#31506f" stroke-width="4.4" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="19.7" r="2.4" fill="url(#kSkin)"/>' +
+    '</g>' +
+
+    '<circle cx="24" cy="16.4" r="6.2" fill="url(#kSkin)"/>' +
+    '<circle cx="21.6" cy="16.3" r="1.05" fill="#2a2119"/><circle cx="26.4" cy="16.3" r="1.05" fill="#2a2119"/>' +
+    '<circle cx="22" cy="15.9" r=".34" fill="#fff"/><circle cx="26.8" cy="15.9" r=".34" fill="#fff"/>' +
+    '<path d="M19.9 13.9 q1.6 -1 3 -.3 M25.1 13.6 q1.4 -.7 3 .3" stroke="#6b5a45" stroke-width=".9" fill="none" stroke-linecap="round"/>' +
+    // beard on the jaw only, and a moustache above it, so the face stays a face
+    '<path d="M20.6 20.4 Q21 25 24 25.6 Q27 25 27.4 20.4 Q25.8 22.5 24 22.5 Q22.2 22.5 20.6 20.4 Z" fill="#8e8880"/>' +
+    '<path d="M21.9 19.6 q2.1 1.3 4.2 0 q-1 1.6 -2.1 1.6 q-1.1 0 -2.1 -1.6 Z" fill="#7b756c"/>' +
+    '<path d="M22.6 22.6 q1.4 .8 2.8 0" stroke="#7a4a3b" stroke-width=".7" fill="none" stroke-linecap="round"/>' +
+    '<path d="M18.2 12.4 Q24 7.2 29.8 12.4 Z" fill="#16283c"/>' +
+    '<rect x="16.6" y="12" width="14.8" height="2.2" rx="1.1" fill="#0e1c2b"/>' +
+    '<circle cx="24" cy="10.1" r="1.1" fill="#E6CC8C"/>' +
+
+    '</g>';
+
+  // the aria-label changes with the art, so match either wording
+  var CAPTAIN_BTN = 'button[aria-label*="captain"], button[aria-label*="keeper"]';
+
+  /* idle -> wave -> walk -> idle -> sit, then round again */
+  var KEEPER_CYCLE = [
+    ['is-idle', 4200],
+    ['is-wave', 2400],
+    ['is-walk', 5200],
+    ['is-idle', 2600],
+    ['is-sit', 6000]
+  ];
+  var KEEPER_STATES = ['is-idle', 'is-walk', 'is-sit', 'is-wave'];
+
+  function armKeeper(svg) {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setState(s) {
+      KEEPER_STATES.forEach(function (c) { svg.classList.remove(c); });
+      void svg.getBoundingClientRect();   // reflow, so a repeated state restarts
+      svg.classList.add(s);
+    }
+    if (reduce) { setState('is-idle'); return; }
+
+    var i = 0;
+    function step() {
+      var frame = KEEPER_CYCLE[i % KEEPER_CYCLE.length];
+      setState(frame[0]);
+      i++;
+      svg.__mnrTimer = setTimeout(step, frame[1]);
+    }
+    step();
+
+    // clicking the keeper makes him wave back, then the cycle resumes
+    var btn = svg.closest('button');
+    if (btn && !btn.__mnrWaveBound) {
+      btn.__mnrWaveBound = true;
+      btn.addEventListener('click', function () {
+        clearTimeout(svg.__mnrTimer);
+        setState('is-wave');
+        i = 2;   // resume at the walk that follows a wave
+        svg.__mnrTimer = setTimeout(step, 2400);
+      });
+    }
+  }
 
   function upgradePirate() {
-    var btns = document.querySelectorAll(CAPTAIN_BTN + ' svg');
-    btns.forEach(function (svg) {
-      if (svg.getAttribute('data-manara-captain')) return;
-      svg.setAttribute('data-manara-captain', '1');
-      svg.innerHTML = CAPTAIN_SVG;
+    document.querySelectorAll(CAPTAIN_BTN).forEach(function (btn) {
+      var label = btn.getAttribute('aria-label') || '';
+      if (label.indexOf('captain') > -1) {
+        btn.setAttribute('aria-label', 'Another reflection from the lighthouse keeper');
+      }
+      var svg = btn.querySelector('svg');
+      if (!svg || svg.__mnrKeeper) return;
+      svg.__mnrKeeper = true;
+      svg.setAttribute('viewBox', '0 0 48 72');
+      svg.setAttribute('width', '58');
+      svg.setAttribute('height', '87');
+      svg.classList.add('mnr-keeper');
+      svg.innerHTML = KEEPER_SVG;
+      armKeeper(svg);
     });
   }
+
 
   /* ---------------------------------------------------------------------
      Captain Marlow speaks wisdom, not pirate puns.
@@ -239,8 +337,24 @@
      enumerate the copy, rewire them all and exclude only the bare nav "Contact"
      link, which should still jump to the contact section (WhatsApp / call). */
   var NAV_CONTACT = /^contact$/i;
+  var TENDER_CTA = /tender|invitation to bid|invitations to bid/i;
   // pricing.html / content-studio.html link across to the homepage anchor
   var CONSULT_HREFS = 'a[href="#contact"], a[href="index.html#contact"]';
+
+  /* A CTA sitting inside the tender card ("Discuss your tender") belongs on the
+     tender brief, not the generic consultation form. Decide by the link's own
+     wording first, then by the small card that encloses it. The length guard
+     stops the climb from matching a whole section that merely mentions tenders. */
+  function targetFor(a) {
+    if (TENDER_CTA.test((a.textContent || '').trim())) return 'tender.html';
+    var n = a.parentElement, depth = 0;
+    while (n && depth++ < 4) {
+      var t = (n.textContent || '');
+      if (t.length < 400 && TENDER_CTA.test(t)) return 'tender.html';
+      n = n.parentElement;
+    }
+    return 'consultation.html';
+  }
 
   function isConsultCta(el) {
     var a = el && el.closest ? el.closest('a') : null;
@@ -253,8 +367,10 @@
     document.querySelectorAll(CONSULT_HREFS).forEach(function (a) {
       if (a.getAttribute('data-manara-consult')) return;
       if (NAV_CONTACT.test((a.textContent || '').trim())) return;
-      a.setAttribute('data-manara-consult', '1');
-      a.setAttribute('href', 'consultation.html');
+      var target = targetFor(a);
+      // the attribute carries the destination, so the guard cannot disagree with the href
+      a.setAttribute('data-manara-consult', target);
+      a.setAttribute('href', target);
     });
   }
 
@@ -268,7 +384,7 @@
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      window.location.href = 'consultation.html';
+      window.location.href = a.getAttribute('data-manara-consult');
     }, true);
   }
 
