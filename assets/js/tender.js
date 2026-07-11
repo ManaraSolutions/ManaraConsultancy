@@ -53,7 +53,7 @@
         var o = document.createElement('option');
         o.value = c.n;
         o.setAttribute('data-dial', c.d);
-        o.textContent = (c.f ? c.f + '  ' : '') + c.n + (sel === countrySel ? ' (' + c.d + ')' : '');
+        o.textContent = c.n + (c.f ? '  ' + c.f : '') + (sel === countrySel ? '  (' + c.d + ')' : '');
         frag.appendChild(o);
       });
       sel.appendChild(frag);

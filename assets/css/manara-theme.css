@@ -3,6 +3,12 @@
    the browser across the whole site instead of a duplicated inline <style>
    per page. Pairs with assets/js/manara-ui.js for reveal/stagger/counters. */
 
+/* The intake forms toggle fields by setting/removing the `hidden` attribute
+   (email vs. phone, conditional rows). Several form controls carry
+   `label.fld{display:flex}`, which outranks the UA `[hidden]{display:none}`
+   and left hidden fields visible. Restore the attribute's meaning globally. */
+[hidden]{display:none !important;}
+
 :root{
   --navy-deep:#060d16;
   --navy:#0C1A2A;

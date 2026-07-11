@@ -21,8 +21,9 @@
 
   var PROMPTS = [
     { label: 'What do you do?', text: 'What does Manara actually do?' },
-    { label: 'Cost of an AI agent', text: 'What does an AI agent like you cost to build?' },
-    { label: 'Were you built by Manara?', text: 'Were you built by Manara, and how?' }
+    { label: 'Legal & AI law', text: 'What legal services does Manara offer, and what is AI law consultancy?' },
+    { label: 'Fashion styling', text: 'Tell me about Manara\'s fashion consultancy and styling services.' },
+    { label: 'Cost of an AI agent', text: 'What does an AI agent like you cost to build?' }
   ];
 
   /* The optic. viewBox 0 0 48 48. Drawn back-to-front: sweep, housing, glass,

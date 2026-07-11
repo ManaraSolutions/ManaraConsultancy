@@ -7,7 +7,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="Manara Consultancy"><meta property="og:title" content="About Manara Consultancy | Our Story, Vision & Mission"><meta property="og:description" content="A fixed point in changing waters — 10+ years guiding companies, careers and scholars across Lebanon, the UK, US, Canada and Dubai."><meta property="og:url" content="https://manaraconsultancy.online/about.html"><meta property="og:image" content="https://manaraconsultancy.online/og-image.jpg"><meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"About Manara Consultancy","url":"https://manaraconsultancy.online/about.html","about":{"@type":"ProfessionalService","name":"Manara Consultancy","foundingDate":"2016","areaServed":["Lebanon","United Kingdom","United States","Canada","United Arab Emirates"]}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/manara-theme.css?v=5">
+<link rel="stylesheet" href="assets/css/manara-theme.css?v=6">
 <style>
 /* about-page-only components (photos, pull quote, vision/mission cards) */
 /* figures size to their media's natural aspect ratio — no cropping on any screen */
@@ -52,6 +52,14 @@
 @media (max-width:640px){
   .intro,.secp,.vmc p,.card p{text-align:left}
 }
+/* UN Sustainable Development Goals grid */
+.sdg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px;margin-top:30px}
+.sdg{border:1px solid rgba(var(--cream-rgb),.14);border-radius:16px;overflow:hidden;background:linear-gradient(160deg,rgba(var(--cream-rgb),.045),rgba(12,26,42,.55) 62%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 20px 44px -30px rgba(0,0,0,.65);transition:transform .4s var(--ease-out),border-color .4s;display:flex;flex-direction:column}
+.sdg:hover{transform:translateY(-5px);border-color:rgba(var(--gold-rgb),.5)}
+.sdg-ic{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}
+.sdg-body{padding:15px 16px 18px;font-size:13.5px;color:var(--sand-mid);text-align:left;flex:1}
+.sdg-agenda{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.sdg-agenda span{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);border:1px solid rgba(var(--gold-rgb),.4);background:rgba(var(--gold-rgb),.1);border-radius:999px;padding:6px 13px}
 </style></head>
 <body data-scene="ship">
 <div class="bg"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="gridbg"></div><div class="beam"><div></div></div>
@@ -127,6 +135,53 @@
       </div>
     </div>
   </div>
+</section>
+
+<section class="sec" data-reveal>
+  <h2 class="serif h2s">Our alignment with the 2030 Agenda</h2>
+  <p class="secp">Manara's work maps directly onto the United Nations 2030 Agenda for Sustainable Development. We do not treat the Sustainable Development Goals as a badge to display; we treat them as a standard for the kind of house we want to be. These are the nine goals our advisory, legal, education and content practices actively advance — and the concrete way each one shows up in the work.</p>
+  <div class="sdg-grid">
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-04.jpg" alt="UN Sustainable Development Goal 4: Quality Education" loading="lazy">
+      <div class="sdg-body">Thesis and research supervision, scholar mentoring, and open, practical guidance on our blog widen access to quality education across the region and beyond.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-05.jpg" alt="UN Sustainable Development Goal 5: Gender Equality" loading="lazy">
+      <div class="sdg-body">We actively support women into leadership — backing women founders, professionals and scholars, and advising clients on inclusive, equitable workplace policy.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-08.jpg" alt="UN Sustainable Development Goal 8: Decent Work and Economic Growth" loading="lazy">
+      <div class="sdg-body">Business, startup and career advisory that helps enterprises grow sustainably and moves individuals into decent, productive, dignified work.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-09.jpg" alt="UN Sustainable Development Goal 9: Industry, Innovation and Infrastructure" loading="lazy">
+      <div class="sdg-body">AI strategy, agents and workflow automation help organisations modernise and innovate responsibly, closing the technology gap for smaller players.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-10.jpg" alt="UN Sustainable Development Goal 10: Reduced Inequalities" loading="lazy">
+      <div class="sdg-body">Career mobility, cross-border market access and counsel scoped to widen — not narrow — who can reach good advice.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-12.jpg" alt="UN Sustainable Development Goal 12: Responsible Consumption and Production" loading="lazy">
+      <div class="sdg-body">Paperless, remote-first engagements and durable strategy over disposable quick wins — we build what a client can run long after we leave.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-13.jpg" alt="UN Sustainable Development Goal 13: Climate Action" loading="lazy">
+      <div class="sdg-body">A deliberately light operating footprint: remote-first delivery, digital-first tools and minimal travel keep our carbon impact low by design.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-16.jpg" alt="UN Sustainable Development Goal 16: Peace, Justice and Strong Institutions" loading="lazy">
+      <div class="sdg-body">Legal counsel, AI governance and a strictly confidential, ethical practice that strengthen transparent, accountable institutions.</div>
+    </div>
+    <div class="sdg" data-reveal>
+      <img class="sdg-ic" src="images/sdg/sdg-17.jpg" alt="UN Sustainable Development Goal 17: Partnerships for the Goals" loading="lazy">
+      <div class="sdg-body">We work as a partner, not a vendor — collaborating with clients across Lebanon, the EU, the Gulf and North America toward shared, lasting goals.</div>
+    </div>
+  </div>
+  <div class="sdg-agenda">
+    <span>UN 2030 Agenda</span><span>17 Goals · 169 Targets</span><span>People · Planet · Prosperity</span><span>Peace · Partnership</span>
+  </div>
+  <p class="secp" style="font-size:12px;color:var(--muted);margin-top:16px;text-align:left">The Sustainable Development Goal icons are the property of the United Nations and are shown to indicate the goals Manara actively supports.</p>
 </section>
 
 <div class="cta" data-reveal><h2 class="serif h2s">Let's find your bearings.</h2><p style="color:#EBE2CF;max-width:520px;margin:0 auto 28px;font-size:16px">Every engagement begins with a conversation. Tell us where you're headed and we'll help you chart the course.</p><div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><a class="btn" href="consultation.html">Request a consultation →</a><a class="btn2" href="https://wa.me/96176952134" target="_blank" rel="noopener">WhatsApp us</a></div></div>

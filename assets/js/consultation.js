@@ -42,7 +42,7 @@
       var o = document.createElement('option');
       o.value = c.n;
       o.setAttribute('data-dial', c.d);
-      o.textContent = (c.f ? c.f + '  ' : '') + c.n + ' (' + c.d + ')';
+      o.textContent = c.n + (c.f ? '  ' + c.f : '') + '  (' + c.d + ')';
       frag.appendChild(o);
     });
     countrySel.appendChild(frag);
