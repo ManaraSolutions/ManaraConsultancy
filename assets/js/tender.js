@@ -298,60 +298,83 @@
     return ok;
   }
 
-  /* ---------- plain-text body (mailto fallback + email preamble) ---------- */
+  /* ---------- warm cover note: the email body itself (the PDF carries the full
+     brief, so the message stays short, human and on-brand) ---------- */
+  function coverNote() {
+    var name = val('name'), org = val('org'), info = deadlineInfo(), title = val('title');
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
+    var dl = info ? info.label + (info.days < 0 ? ' (passed)' : info.days <= 30 ? ' (' + info.days + ' days)' : '') : null;
+    return [
+      'Thank you — we have received your tender support request and it is now with our team.',
+      '',
+      'Your full brief is attached to this email as a PDF. A Manara adviser will review it in confidence and reply within one business day.',
+      '',
+      'Reference: ' + REF,
+      line('Tender', title),
+      line('Submission deadline', dl),
+      line('From', name + (org ? ', ' + org : '')),
+      'Submitted: ' + now.toLocaleDateString('en-GB', DATE_FMT),
+      '',
+      'If anything changes in the meantime, simply reply to this email.',
+      '',
+      'Manara Consultancy — a fixed point in changing waters.',
+      'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
+  }
+
+  /* ---------- full detail: used ONLY for the mailto fallback, where no PDF can
+     be attached. No ASCII rules; blank fields are omitted, not dashed. ---------- */
   function bodyText() {
     var info = deadlineInfo();
     var docs = checked('doc');
     var sup = checked('support');
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
     return [
       'TENDER SUPPORT BRIEF ' + REF,
       'Submitted ' + now.toLocaleDateString('en-GB', DATE_FMT),
       '',
-      '--- THE TENDER ---',
-      'Title: ' + (val('title') || '-'),
-      'Reference: ' + (val('tref') || '-'),
-      'Issuing authority: ' + (val('issuer') || '-'),
-      'Country of implementation: ' + (val('impl') || '-'),
-      'Procurement type: ' + radio('sector'),
+      'THE TENDER',
+      line('Title', val('title')),
+      line('Reference', val('tref')),
+      line('Issuing authority', val('issuer')),
+      line('Country of implementation', val('impl')),
+      line('Procurement type', radio('sector')),
       '',
-      '--- DEADLINES & SUBMISSION ---',
-      'Submission deadline: ' + (info ? info.label : '-') + (val('dltime') ? ', ' + val('dltime') : ''),
-      'Time remaining: ' + (info ? (info.days < 0 ? 'PASSED' : info.days + ' days') : '-'),
-      'Clarifications close: ' + (val('qdeadline') || '-'),
-      'Submission method: ' + val('method'),
-      'Pre-bid / site visit: ' + val('sitevisit'),
-      'Language: ' + val('lang'),
-      'Copies required: ' + (val('copies') || '-'),
+      'DEADLINES & SUBMISSION',
+      line('Submission deadline', info ? info.label + (val('dltime') ? ', ' + val('dltime') : '') : null),
+      line('Time remaining', info ? (info.days < 0 ? 'passed' : info.days + ' days') : null),
+      line('Clarifications close', val('qdeadline')),
+      line('Submission method', val('method')),
+      line('Pre-bid / site visit', val('sitevisit')),
+      line('Language', val('lang')),
+      line('Copies required', val('copies')),
       '',
-      '--- COMMERCIAL & GUARANTEES ---',
-      'Estimated value: ' + (valueText() || '-'),
-      'Bid validity: ' + val('validity'),
-      'Bid security: ' + bondText(),
-      'Performance guarantee: ' + val('perfguarantee'),
-      'Evaluation method: ' + val('evaluation'),
-      'Delivery period: ' + (val('delivery') || '-'),
-      'Payment terms: ' + (val('payterms') || '-'),
-      'Incoterms: ' + val('incoterms'),
-      'Bidding as: ' + val('entity'),
+      'COMMERCIAL & GUARANTEES',
+      line('Estimated value', valueText()),
+      line('Bid validity', val('validity')),
+      line('Bid security', bondText()),
+      line('Performance guarantee', val('perfguarantee')),
+      line('Evaluation method', val('evaluation')),
+      line('Delivery period', val('delivery')),
+      line('Payment terms', val('payterms')),
+      line('Incoterms', val('incoterms')),
+      line('Bidding as', val('entity')),
       '',
-      '--- DOCUMENTS REQUIRED ---',
-      docs.length ? docs.join(', ') : 'None flagged',
+      line('Documents required', docs.length ? docs.join(', ') : null),
+      line('Support requested', sup.length ? sup.join(', ') : null),
       '',
-      '--- SUPPORT REQUESTED ---',
-      sup.length ? sup.join(', ') : 'None selected',
-      '',
-      '--- CONTACT ---',
-      'Name: ' + (val('name') || '-'),
-      'Company: ' + (val('org') || '-'),
-      'Location: ' + (val('country') || '-'),
+      'CONTACT',
+      line('Name', val('name')),
+      line('Company', val('org')),
+      line('Location', val('country')),
       'Reach by: ' + reachSel.value,
-      'Contact: ' + (contactValue() || '-'),
-      '',
-      'Notes:',
-      val('notes') || '-',
+      line('Contact', contactValue()),
+      val('notes') ? '' : null,
+      val('notes') ? 'Notes:' : null,
+      val('notes') || null,
       '',
       'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
-    ].join('\n');
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
   }
 
   function subject() {
@@ -452,7 +475,8 @@
             clientName: val('name'),
             clientEmail: reachSel.value === 'Email' ? val('email') : '',
             subject: subject(),
-            bodyText: bodyText()
+            bodyText: bodyText(),
+            coverText: coverNote()
           })
         });
       })

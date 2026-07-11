@@ -178,30 +178,55 @@
     return ok;
   }
 
-  /* ---------- plain-text body (mailto fallback + email preamble) ---------- */
+  /* ---------- warm cover note: the email body itself (the PDF carries the full
+     request, so the message stays short, human and on-brand) ---------- */
+  function coverNote() {
+    var name = val('name'), org = val('org'), sv = services();
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
+    return [
+      'Thank you — we have received your consultation request and it is now with our team.',
+      '',
+      'Your request is attached to this email as a PDF. A Manara adviser will review it and reply within one business day.',
+      '',
+      'Reference: ' + REF,
+      line('Practice', val('practice')),
+      line('Services', sv.length ? sv.join(', ') : null),
+      line('From', name + (org ? ', ' + org : '')),
+      'Submitted: ' + now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+      '',
+      'If anything changes in the meantime, simply reply to this email.',
+      '',
+      'Manara Consultancy — a fixed point in changing waters.',
+      'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
+  }
+
+  /* ---------- full detail: used ONLY for the mailto fallback, where no PDF can
+     be attached. Blank fields are omitted rather than shown as dashes. ---------- */
   function bodyText() {
     var sv = services();
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
     return [
       'CONSULTATION REQUEST ' + REF,
       'Submitted ' + now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
       '',
-      'Preferred practice: ' + val('practice'),
-      'Services of interest: ' + (sv.length ? sv.join(', ') : '—'),
+      line('Preferred practice', val('practice')),
+      line('Services of interest', sv.length ? sv.join(', ') : null),
       '',
-      'Name: ' + (val('name') || '—'),
-      val('org') ? 'Organisation: ' + val('org') : '',
-      'Location: ' + (val('country') || '—'),
+      line('Name', val('name')),
+      line('Organisation', val('org')),
+      line('Location', val('country')),
       'Best way to reach me: ' + reachSel.value,
-      'Contact: ' + (contactValue() || '—'),
+      line('Contact', contactValue()),
       '',
-      'Timeline: ' + val('timeline'),
-      'Indicative budget: ' + val('budget'),
-      '',
-      'Situation:',
-      val('notes') || '—',
+      line('Timeline', val('timeline')),
+      line('Indicative budget', val('budget')),
+      val('notes') ? '' : null,
+      val('notes') ? 'Situation:' : null,
+      val('notes') || null,
       '',
       'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
-    ].filter(Boolean).join('\n');
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
   }
 
   function subject() {
@@ -305,7 +330,8 @@
             clientName: val('name'),
             clientEmail: reachSel.value === 'Email' ? val('email') : '',
             subject: subject(),
-            bodyText: bodyText()
+            bodyText: bodyText(),
+            coverText: coverNote()
           })
         });
       })

@@ -220,43 +220,68 @@
     return ok;
   }
 
-  /* ---------- plain-text body (mailto fallback + email preamble) ---------- */
+  /* ---------- warm cover note: the email body itself (the PDF carries the full
+     brief, so the message stays short, human and on-brand) ---------- */
+  function coverNote() {
+    var name = val('name'), org = val('org'), m = matters();
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
+    return [
+      'Thank you — we have received your legal enquiry and it is now with our team.',
+      '',
+      'Your full brief is attached to this email as a PDF. A Manara adviser will review it in confidence and reply within one business day.',
+      '',
+      'Reference: ' + REF,
+      'Matter: ' + (m.length ? m.join(', ') + ' (' + practice() + ')' : practice()),
+      line('From', name + (org ? ', ' + org : '')),
+      'Submitted: ' + now.toLocaleDateString('en-GB', DATE_FMT),
+      '',
+      'If anything changes in the meantime, simply reply to this email.',
+      '',
+      'Manara Consultancy — a fixed point in changing waters.',
+      'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
+  }
+
+  /* ---------- full detail: used ONLY for the mailto fallback, where no PDF can
+     be attached — so the brief must travel in the body. Cleaned up: no ASCII
+     rules, and blank fields are omitted rather than shown as dashes. ---------- */
   function bodyText() {
     var info = deadlineInfo();
     var docs = checked('doc');
+    var m = matters();
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
     return [
       'LEGAL ENGAGEMENT BRIEF ' + REF + ' (CONFIDENTIAL)',
       'Submitted ' + now.toLocaleDateString('en-GB', DATE_FMT),
       '',
-      '--- THE MATTER ---',
+      'THE MATTER',
       'Practice: ' + practice(),
-      'Type of matter: ' + (matters().length ? matters().join(', ') : '-'),
-      'Jurisdiction: ' + (val('jur') || '-'),
-      'Stage: ' + val('stage'),
-      'Counterparty: ' + (val('counterparty') || '-'),
-      'Key deadline: ' + (info ? info.label + (info.days < 0 ? ' (PASSED)' : '') : '-'),
+      line('Type of matter', m.length ? m.join(', ') : null),
+      line('Jurisdiction', val('jur')),
+      line('Stage', val('stage')),
+      line('Counterparty', val('counterparty')),
+      line('Key deadline', info ? info.label + (info.days < 0 ? ' (passed)' : '') : null),
       '',
-      '--- VALUE & ENGAGEMENT ---',
-      'Value at stake: ' + (valueText() || '-'),
-      'Urgency: ' + val('urgency'),
-      'Fee preference: ' + val('fee'),
-      'Budget: ' + val('budget'),
+      'VALUE & ENGAGEMENT',
+      line('Value at stake', valueText()),
+      line('Urgency', val('urgency')),
+      line('Fee preference', val('fee')),
+      line('Budget', val('budget')),
       '',
-      '--- DOCUMENTS AVAILABLE ---',
-      docs.length ? docs.join(', ') : 'None flagged',
+      line('Documents available', docs.length ? docs.join(', ') : null),
       '',
-      '--- CONTACT ---',
-      'Name: ' + (val('name') || '-'),
-      'Organisation: ' + (val('org') || '-'),
-      'Location: ' + (val('country') || '-'),
+      'CONTACT',
+      line('Name', val('name')),
+      line('Organisation', val('org')),
+      line('Location', val('country')),
       'Reach by: ' + reachSel.value,
-      'Contact: ' + (contactValue() || '-'),
-      '',
-      'Matter notes:',
-      val('notes') || '-',
+      line('Contact', contactValue()),
+      val('notes') ? '' : null,
+      val('notes') ? 'Matter notes:' : null,
+      val('notes') || null,
       '',
       'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
-    ].join('\n');
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
   }
 
   function subject() {
@@ -346,7 +371,8 @@
             clientName: val('name'),
             clientEmail: reachSel.value === 'Email' ? val('email') : '',
             subject: subject(),
-            bodyText: bodyText()
+            bodyText: bodyText(),
+            coverText: coverNote()
           })
         });
       })

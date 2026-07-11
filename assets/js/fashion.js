@@ -187,41 +187,66 @@
     return ok;
   }
 
-  /* ---------- plain-text body (mailto fallback + email preamble) ---------- */
+  /* ---------- warm cover note: the email body itself (the PDF carries the full
+     brief, so the message stays short, human and on-brand) ---------- */
+  function coverNote() {
+    var name = val('name'), svc = checked('service'), who = radio('who');
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
+    return [
+      'Thank you — we have received your styling request and it is now with our team.',
+      '',
+      'Your full brief is attached to this email as a PDF. A Manara stylist will review it and reply within one business day.',
+      '',
+      'Reference: ' + REF,
+      line('Styling for', who),
+      line('Services', svc.length ? svc.join(', ') : null),
+      line('From', name),
+      'Submitted: ' + now.toLocaleDateString('en-GB', DATE_FMT),
+      '',
+      'If anything changes in the meantime, simply reply to this email.',
+      '',
+      'Manara Consultancy — a fixed point in changing waters.',
+      'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
+  }
+
+  /* ---------- full detail: used ONLY for the mailto fallback, where no PDF can
+     be attached. No ASCII rules; blank fields are omitted, not dashed. ---------- */
   function bodyText() {
     var svc = checked('service');
     var occ = checked('occasion');
+    var line = function (label, v) { return v ? label + ': ' + v : null; };
     return [
       'FASHION STYLING BRIEF ' + REF,
       'Submitted ' + now.toLocaleDateString('en-GB', DATE_FMT),
       '',
-      '--- WHAT YOU NEED ---',
-      'Services: ' + (svc.length ? svc.join(', ') : '-'),
-      'Styling for: ' + (radio('who') || '-'),
-      'Format: ' + val('format'),
-      'Engagement: ' + val('session'),
+      'WHAT YOU NEED',
+      line('Services', svc.length ? svc.join(', ') : null),
+      line('Styling for', radio('who')),
+      line('Format', val('format')),
+      line('Engagement', val('session')),
       '',
-      '--- OCCASION & CONTEXT ---',
-      'Occasion: ' + (occ.length ? occ.join(', ') : '-'),
-      'Event / target date: ' + (eventDateLabel() || '-'),
-      'Sizes: ' + (val('sizes') || '-'),
+      'OCCASION & CONTEXT',
+      line('Occasion', occ.length ? occ.join(', ') : null),
+      line('Event / target date', eventDateLabel()),
+      line('Sizes', val('sizes')),
       '',
-      '--- PRACTICALITIES ---',
-      'City / location: ' + (val('city') || '-'),
-      'Timeline: ' + val('timeline'),
-      'Budget: ' + val('budget'),
+      'PRACTICALITIES',
+      line('City / location', val('city')),
+      line('Timeline', val('timeline')),
+      line('Budget', val('budget')),
       '',
-      '--- CONTACT ---',
-      'Name: ' + (val('name') || '-'),
-      'Location: ' + (val('country') || '-'),
+      'CONTACT',
+      line('Name', val('name')),
+      line('Location', val('country')),
       'Reach by: ' + reachSel.value,
-      'Contact: ' + (contactValue() || '-'),
-      '',
-      'Style goals:',
-      val('notes') || '-',
+      line('Contact', contactValue()),
+      val('notes') ? '' : null,
+      val('notes') ? 'Style goals:' : null,
+      val('notes') || null,
       '',
       'manaraconsultancy.online · +961 76 952 134 · hello@manaraconsultancy.online'
-    ].join('\n');
+    ].filter(function (x) { return x !== null; }).join('\n').replace(/\n{3,}/g, '\n\n');
   }
 
   function subject() {
@@ -312,7 +337,8 @@
             clientName: val('name'),
             clientEmail: reachSel.value === 'Email' ? val('email') : '',
             subject: subject(),
-            bodyText: bodyText()
+            bodyText: bodyText(),
+            coverText: coverNote()
           })
         });
       })
