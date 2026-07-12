@@ -200,7 +200,11 @@ details p{padding:0 22px 18px;color:var(--sand-mid);font-size:14.5px}
 
 /* ---------- footer ---------- */
 footer{border-top:1px solid rgba(var(--cream-rgb),.12);padding:34px 0;position:relative;z-index:1}
-.fin{max-width:var(--wrap-max);margin:0 auto;padding:0 26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.fin{max-width:var(--wrap-max);margin:0 auto;padding:0 26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);align-items:center}
+.fin .social{display:inline-flex;align-items:center;gap:16px}
+.fin .social a{display:inline-flex;color:var(--gold-light);transition:color .25s var(--ease-out),transform .25s var(--ease-out)}
+.fin .social a:hover{color:#fff;transform:translateY(-2px)}
+.fin .social svg{width:19px;height:19px;fill:currentColor;display:block}
 
 /* ---------- reveal + stagger (driven by assets/js/manara-ui.js) ---------- */
 [data-reveal]{
