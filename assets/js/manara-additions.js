@@ -204,14 +204,45 @@
     if (el) el.style.setProperty('display', 'none', 'important');
   }
 
-  // The 3D hero scene is a second WebGL context plus a Three.js download from a CDN.
-  // That is a lot to ask of a phone for something purely atmospheric, so on narrow
-  // screens we drop it and let the existing lighthouse background carry the hero.
+  // The 3D hero runs on phones too, so the site opens with the same background on
+  // every device. (It was previously dropped below 760px to save a second WebGL
+  // context, but that made mobile look like a different site.) We clear any stale
+  // display:none an older cached build may have left behind.
   function gate3dHero() {
     var el = document.querySelector('.mnr-3d-hero');
     if (!el) return;
-    if (window.innerWidth < 760) el.style.setProperty('display', 'none', 'important');
-    else el.style.removeProperty('display');
+    if (el.style.display === 'none' && !el.__mnrFailed) el.style.removeProperty('display');
+  }
+
+  // The 3D hero must never leave the page looking broken. It can fail to render for
+  // reasons we don't control — opened over file:// (ES modules are blocked there), a
+  // stale cached copy, or a device that gives up on a second WebGL context. So we
+  // verify a canvas actually painted inside the iframe; if it hasn't within a grace
+  // period, we drop the layer entirely and the original lighthouse hero shows through.
+  function verify3dHero() {
+    var el = document.querySelector('.mnr-3d-hero');
+    if (!el || el.__mnrVerified) return;
+    var ifr = el.querySelector('iframe');
+    if (!ifr) return;
+    if (!el.__mnrStart) el.__mnrStart = Date.now();
+
+    var painted = false;
+    try {
+      var d = ifr.contentDocument;                 // throws on an opaque origin (file://)
+      var c = d && d.querySelector('canvas');
+      painted = !!(c && c.clientWidth > 0 && c.clientHeight > 0);
+    } catch (e) { painted = false; }
+
+    if (painted) {                                  // scene is up — keep it
+      el.__mnrVerified = true;
+      el.style.removeProperty('display');
+      return;
+    }
+    if (Date.now() - el.__mnrStart > 9000) {        // never painted — fall back cleanly
+      el.__mnrVerified = true;
+      el.__mnrFailed = true;
+      el.style.setProperty('display', 'none', 'important');
+    }
   }
 
   function tightenSections() {
@@ -230,6 +261,7 @@
     replaceCareersForm();
     tightenSections();
     gate3dHero();
+    verify3dHero();
     hideLegacyHRModal();
     litScrollCue();
     removeCardPrices();
@@ -299,4 +331,9 @@
   mo.observe(document, { childList: true, subtree: true });
   setTimeout(tick, 1500);
   setTimeout(tick, 4000);
+  // later passes so verify3dHero's grace period is actually reached even on a quiet
+  // page (the observer only ticks on DOM changes, which may have stopped by then)
+  setTimeout(tick, 7000);
+  setTimeout(tick, 9500);
+  setTimeout(tick, 12000);
 })();

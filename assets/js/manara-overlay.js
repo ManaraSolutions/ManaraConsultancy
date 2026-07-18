@@ -6,7 +6,7 @@
    to a more detailed illustration. Purely additive — no app logic touched. */
 (function () {
   var CSS_ID = 'manara-overlay-css';
-  var CSS_HREF = 'assets/css/manara-overlay.css?v=26';
+  var CSS_HREF = 'assets/css/manara-overlay.css?v=27';
 
   function injectCss() {
     if (document.getElementById(CSS_ID)) return;

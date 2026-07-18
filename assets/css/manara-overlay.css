@@ -674,3 +674,14 @@ a.scpf:hover, button.scpf:hover{
   -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
   -webkit-mask-size:100% 100%;   mask-size:100% 100%;
 }
+
+/* On phones the scene would otherwise render into a tall, narrow viewport and push
+   the globe off-frame. Give the iframe a wide virtual viewport and centre it, so the
+   composition matches desktop and the crop lands on the globe rather than beside it. */
+@media (max-width: 760px){
+  .mnr-3d-hero iframe{
+    width:1200px !important;
+    left:50% !important;
+    transform:translateX(-50%);
+  }
+}
