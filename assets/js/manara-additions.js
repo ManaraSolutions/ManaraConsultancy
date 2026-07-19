@@ -204,13 +204,112 @@
     if (el) el.style.setProperty('display', 'none', 'important');
   }
 
-  // The 3D hero runs on phones too, so the site opens with the same background on
-  // every device. (It was previously dropped below 760px to save a second WebGL
-  // context, but that made mobile look like a different site.) We clear any stale
-  // display:none an older cached build may have left behind.
+  // The 3D hero is a WebGL scene that pulls ~2MB of Three.js. On a phone that is
+  // the single biggest cost on the page — enough to stall the whole load — so the
+  // iframe ships with data-src and we only promote it to a real src on screens
+  // wide enough to be worth it. Phones get the original lighthouse hero instead,
+  // which costs nothing, and the "Explore in 3D" CTA is still there for anyone
+  // who wants the full scene. (Visual parity on mobile isn't worth an unusable page.)
+  var HERO_3D_MIN_WIDTH = 900;
+  var HERO_POSTER = 'assets/img/hero-poster.jpg';   // a real frame of the scene, 24KB
+
+  // Phones get a still of the scene rather than the live render, so the hero looks
+  // the same as desktop for ~24KB instead of ~2MB. Tapping the badge swaps in the
+  // real thing for anyone who wants it.
+  function showPoster(el, ifr) {
+    if (el.__mnrPoster) return;
+    // The bundle re-renders the hero, handing us a brand-new .mnr-3d-hero whose
+    // __mnrPoster flag is undefined. Without this the badge would be re-created on
+    // every re-render and stack up invisibly on <body>.
+    if (document.querySelector('.mnr-3d-badge')) { el.__mnrPoster = true; return; }
+    el.__mnrPoster = true;
+    el.style.removeProperty('display');
+    el.style.backgroundImage = 'url("' + HERO_POSTER + '")';
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+
+    var badge = document.createElement('button');
+    badge.type = 'button';
+    badge.className = 'mnr-3d-badge';
+    badge.textContent = 'Tap for 3D';
+    // Sits in normal flow alongside the hero's own CTAs rather than at a fixed
+    // offset. An earlier version was absolutely positioned at top:152px, which
+    // was clear space until the mobile hero was reordered and the headline moved
+    // into it. In-flow means it can't collide again at any screen size.
+    badge.style.cssText =
+      'display:inline-flex;align-items:center;margin:14px 0 0;pointer-events:auto;' +
+      'font:600 12px/1 system-ui,sans-serif;letter-spacing:.04em;color:#E6CC8C;' +
+      'background:rgba(8,20,32,.72);border:1px solid rgba(230,204,140,.5);' +
+      'border-radius:999px;padding:9px 14px;cursor:pointer;';
+    /* No listener is attached here on purpose — see the delegated handler below.
+       The bundle rebuilds this row, and a re-rendered badge is a fresh element
+       with no listeners, so a per-element handler silently stops working. */
+    // Host it in the hero's CTA row when we can find it, so it lines up with
+    // "Start with a conversation" and moves with them. Body is the fallback.
+    var ctaHost = null;
+    var anchors = document.getElementsByTagName('a');
+    for (var i = 0; i < anchors.length; i++) {
+      if (/start with a conversation/i.test(anchors[i].textContent || '')) {
+        ctaHost = anchors[i].parentElement;
+        break;
+      }
+    }
+    (ctaHost || document.body).appendChild(badge);
+  }
+
+  // If a phone is rotated (or a tablet crosses the threshold) into desktop width,
+  // drop the poster furniture so the live scene isn't competing with a still.
+  function clearPoster(el) {
+    if (!el.__mnrPoster) return;
+    el.__mnrPoster = false;
+    el.style.backgroundImage = '';
+    var b = document.querySelector('.mnr-3d-badge');
+    if (b) b.remove();
+  }
+
+  /* Swaps the still for the live scene. Everything is re-queried at call time,
+     because by now the hero may have been re-rendered several times over. */
+  function activate3dScene() {
+    var el = document.querySelector('.mnr-3d-hero');
+    if (!el) return;
+    var ifr = el.querySelector('iframe');
+    if (ifr && !ifr.getAttribute('src')) {
+      var pending = ifr.getAttribute('data-src');
+      if (pending) ifr.setAttribute('src', pending);
+    }
+    el.style.backgroundImage = '';   // let the live scene through
+    el.__mnrPoster = false;
+    el.__mnrStart = 0;               // restart the paint-verification clock
+    var b = document.querySelector('.mnr-3d-badge');
+    if (b) b.remove();
+  }
+
+  /* Delegated once on document, in the capture phase. Survives every re-render
+     of the badge, which a per-element listener does not. */
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var hit = t && t.closest ? t.closest('.mnr-3d-badge') : null;
+    if (!hit) return;
+    e.preventDefault();
+    activate3dScene();
+  }, true);
+
   function gate3dHero() {
     var el = document.querySelector('.mnr-3d-hero');
     if (!el) return;
+    var ifr = el.querySelector('iframe');
+
+    if (window.innerWidth < HERO_3D_MIN_WIDTH) {
+      if (!ifr || !ifr.getAttribute('src')) showPoster(el, ifr);   // never auto-loads the scene
+      return;
+    }
+
+    // wide screen: load the scene once, then let verify3dHero police it
+    clearPoster(el);
+    if (ifr && !ifr.getAttribute('src')) {
+      var pending = ifr.getAttribute('data-src');
+      if (pending) ifr.setAttribute('src', pending);
+    }
     if (el.style.display === 'none' && !el.__mnrFailed) el.style.removeProperty('display');
   }
 
@@ -222,8 +321,9 @@
   function verify3dHero() {
     var el = document.querySelector('.mnr-3d-hero');
     if (!el || el.__mnrVerified) return;
+    if (el.__mnrPoster) return;          // poster mode is a valid resting state, not a failure
     var ifr = el.querySelector('iframe');
-    if (!ifr) return;
+    if (!ifr || !ifr.getAttribute('src')) return;   // nothing asked to paint yet
     if (!el.__mnrStart) el.__mnrStart = Date.now();
 
     var painted = false;

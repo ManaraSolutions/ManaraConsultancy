@@ -322,11 +322,10 @@
       a.setAttribute('data-manara-about', '1');
       a.className = 'scp0';
       a.style.cssText = 'font-size:13.5px;letter-spacing:.04em;color:#EBE2CF;';
-      // place just before the Contact link if present, else append
-      var contact = [].slice.call(nav.children).filter(function (c) {
-        return /^Contact/.test((c.textContent || '').trim());
-      })[0];
-      if (contact) nav.insertBefore(a, contact);
+      // About leads the nav now. It used to be placed before the Contact link,
+      // but Contact has been removed from the header, so that anchor is gone and
+      // this would have silently fallen through to appending it last.
+      if (nav.firstChild) nav.insertBefore(a, nav.firstChild);
       else nav.appendChild(a);
     });
   }
@@ -445,9 +444,12 @@
 
   function tick() {
     injectCss();
-    upgradePirate();
-    captainSpeaksWisdom();
-    styleCaptainBubble();
+    /* Captain Marlow has been removed from the site, so upgradePirate(),
+       captainSpeaksWisdom() and styleCaptainBubble() are no longer called.
+       Their definitions are left in place — they are referenced from several
+       points in this file and unpicking them risks the overlay's working parts
+       for no visible gain. Not calling them here is what actually costs nothing:
+       tick() runs on every DOM mutation. */
     upgradeHrmIcon();
     tagHrCard();
     injectAboutNav();

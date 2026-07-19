@@ -11,8 +11,7 @@
     ['Startup Consultancy', '$200'],
     ['Marketing &amp; Content', '$250'],
     ['Career Advisory', '$100'],
-    ['LinkedIn Management', '$250 / month'],
-    ['Thesis &amp; Research', 'from $15 / page']
+    ['LinkedIn Management', '$250 / month']
   ];
 
   function rowsHtml() {

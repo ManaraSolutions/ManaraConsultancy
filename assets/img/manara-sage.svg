@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 236">
+<style><![CDATA[
+/* Keyframes copied from the agent page. An SVG loaded as an image is an
+   isolated document and cannot reach the host page stylesheet, so without
+   these the mascot renders frozen. */
+@keyframes breathe{ 0%,100%{ transform:translateY(0) scaleY(1) } 50%{ transform:translateY(-2px) scaleY(1.02) } }
+@keyframes corePulse{ 0%,100%{ opacity:.72; transform:scale(1) } 50%{ opacity:1; transform:scale(1.14) } }
+@keyframes beaconPulse{ 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
+@keyframes blinkEye{ 0%,90%,100%{ transform:scaleY(1) } 95%{ transform:scaleY(.1) } }
+]]></style>
+
+<defs>
+              <linearGradient id="gHead" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fe0dd"></stop><stop offset="0.5" stop-color="#1fb0b0"></stop><stop offset="1" stop-color="#0e6a72"></stop></linearGradient>
+              <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1fb0b0"></stop><stop offset="1" stop-color="#073e46"></stop></linearGradient>
+              <linearGradient id="gLimb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#073e46"></stop><stop offset="0.45" stop-color="#1fb0b0"></stop><stop offset="1" stop-color="#0e6a72"></stop></linearGradient>
+              <radialGradient id="gVisor" cx="0.5" cy="0.34" r="0.75"><stop offset="0" stop-color="#14384a"></stop><stop offset="0.6" stop-color="#08202e"></stop><stop offset="1" stop-color="#03101a"></stop></radialGradient>
+              <radialGradient id="irisG" cx="0.5" cy="0.34" r="0.7"><stop offset="0" stop-color="#ccffe9"></stop><stop offset="0.45" stop-color="#4fe0b0"></stop><stop offset="1" stop-color="#0c9a7e"></stop></radialGradient>
+              <radialGradient id="gCore" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffffff"></stop><stop offset="0.35" stop-color="#5fe0dd"></stop><stop offset="1" stop-color="#0e6a72" stop-opacity="0"></stop></radialGradient>
+              <radialGradient id="gSheen" cx="0.35" cy="0.22" r="0.6"><stop offset="0" stop-color="#ffffff" stop-opacity="0.5"></stop><stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop></radialGradient>
+              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#03101a" flood-opacity="0.4"></feDropShadow></filter>
+              <filter id="glow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="2.4" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+            </defs>
+            
+            <ellipse cx="80" cy="226" rx="32" ry="7" fill="#000" opacity=".28"></ellipse>
+            
+            <g style="animation: 4s ease-in-out 0s infinite normal none running breathe; transform: translateY(14px); transform-origin: 80px 150px;">
+              
+              
+              
+              <g display="inline">
+                <rect x="40" y="196" width="42" height="15" rx="7" fill="url(#gLimb)"></rect><ellipse cx="40" cy="203" rx="9" ry="8" fill="url(#gLimb)"></ellipse>
+                <rect x="78" y="196" width="42" height="15" rx="7" fill="url(#gLimb)"></rect><ellipse cx="120" cy="203" rx="9" ry="8" fill="url(#gLimb)"></ellipse>
+              </g>
+              
+              <g display="inline"><rect x="30" y="120" width="15" height="40" rx="7.5" fill="url(#gLimb)"></rect><circle cx="37" cy="162" r="11" fill="url(#gHead)"></circle><circle cx="33" cy="158" r="3" fill="#ffffff" opacity=".4"></circle><rect x="115" y="120" width="15" height="40" rx="7.5" fill="url(#gLimb)"></rect><circle cx="123" cy="162" r="11" fill="url(#gHead)"></circle><circle cx="119" cy="158" r="3" fill="#ffffff" opacity=".4"></circle></g>
+              
+              
+              <path d="M46 118 H114 a18 18 0 0 1 18 18 V168 a14 14 0 0 1 -14 14 H42 a14 14 0 0 1 -14 -14 V136 a18 18 0 0 1 18 -18 Z" fill="url(#gBody)" filter="url(#soft)"></path>
+              <path d="M46 118 H114 a18 18 0 0 1 18 18 V168 a14 14 0 0 1 -14 14 H42 a14 14 0 0 1 -14 -14 V136 a18 18 0 0 1 18 -18 Z" fill="none" stroke="#5fe0dd" stroke-width="1.2" opacity=".45"></path>
+              <g style="animation: 2.6s ease-in-out 0s infinite normal none running corePulse; transform-origin: 80px 150px;">
+                <circle cx="80" cy="150" r="16" fill="url(#gCore)"></circle>
+                <circle cx="80" cy="150" r="8" fill="none" stroke="#5fe0dd" stroke-width="2" opacity=".9"></circle>
+                <circle cx="80" cy="150" r="3.4" fill="#ffffff"></circle>
+              </g>
+              
+              <rect x="79" y="1" width="2" height="11" rx="1" fill="#0e6a72"></rect>
+              <circle cx="80" cy="3" r="4.5" fill="#F6D488" filter="url(#glow)" style="animation: 2s ease-in-out 0s infinite normal none running beaconPulse;"></circle>
+              
+              <rect x="16" y="54" width="12" height="30" rx="6" fill="url(#gLimb)"></rect><rect x="132" y="54" width="12" height="30" rx="6" fill="url(#gLimb)"></rect>
+              <rect x="24" y="16" width="112" height="104" rx="46" fill="url(#gHead)" filter="url(#soft)"></rect>
+              <rect x="24" y="16" width="112" height="104" rx="46" fill="none" stroke="#5fe0dd" stroke-width="1.5" opacity=".55"></rect>
+              <ellipse cx="60" cy="44" rx="32" ry="22" fill="url(#gSheen)"></ellipse>
+              
+              <rect x="40" y="36" width="80" height="70" rx="30" fill="url(#gVisor)"></rect>
+              <rect x="40" y="36" width="80" height="70" rx="30" fill="none" stroke="#0b3348" stroke-width="1"></rect>
+              <path d="M52 46 Q72 40 92 47" stroke="#ffffff" stroke-width="3" opacity=".12" fill="none" stroke-linecap="round"></path>
+            
+            
+            
+            <g display="inline" stroke="#8fe6d6" stroke-width="3.5" stroke-linecap="round" fill="none"><path d="M54 52 Q62 48 70 51"></path><path d="M90 51 Q98 48 106 52"></path></g>
+            
+            
+            <g display="inline">
+              <g filter="url(#glow)" style="animation: 4.4s ease-in-out 0s infinite normal none running blinkEye; transform-box: fill-box; transform-origin: center center;">
+                <ellipse cx="63" cy="70" rx="12" ry="14" fill="#eafcff"></ellipse><ellipse cx="97" cy="70" rx="12" ry="14" fill="#eafcff"></ellipse>
+                <circle cx="64" cy="70" r="8" fill="url(#irisG)"></circle><circle cx="96" cy="70" r="8" fill="url(#irisG)"></circle>
+                <circle cx="64" cy="70" r="4" fill="#08202b"></circle><circle cx="96" cy="70" r="4" fill="#08202b"></circle>
+                <circle cx="61" cy="67" r="1.8" fill="#fff"></circle><circle cx="93" cy="67" r="1.8" fill="#fff"></circle>
+              </g>
+            </g>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <path d="M64,90 Q80,100 96,90" stroke="#d8fff2" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#glow)"></path>
+            </g>
+          </svg>

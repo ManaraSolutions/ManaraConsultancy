@@ -685,3 +685,27 @@ a.scpf:hover, button.scpf:hover{
     transform:translateX(-50%);
   }
 }
+
+/* ── Header nav: close the 880–1180px dead zone ───────────────────────────────
+   The bundle only swaps to the burger menu at max-width:880px, but the desktop
+   nav needs ~1180px to lay out its 14 items. Between those two numbers the full
+   nav rendered and simply overflowed, clipping "Book a consult" off the right
+   edge — which is what a laptop at Windows display scaling actually hits. */
+
+/* below 1200px use the burger the bundle already ships */
+@media (max-width:1199px){
+  header nav.nav-main{ display:none !important; }
+  header button.nav-burger{ display:inline-flex !important; }
+}
+
+/* 1200–1560px the nav fits but is tight, so pull the gaps and type in */
+@media (min-width:1200px) and (max-width:1560px){
+  header nav.nav-main{ column-gap:11px !important; }
+  header nav.nav-main a{
+    font-size:12.5px !important;
+    letter-spacing:0 !important;
+    white-space:nowrap !important;
+  }
+  header > div, header > div > div{ column-gap:8px !important; }
+}
+
