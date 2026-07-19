@@ -472,17 +472,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     function place() {
       if (!window.matchMedia('(max-width: 760px)').matches) {
         bar.style.top = '14px';
+        bar.style.bottom = 'auto';
+        bar.style.left = '50%';
+        bar.style.right = 'auto';
+        bar.style.transform = 'translateX(-50%)';
         return;
       }
-      var band = 0, nodes = document.querySelectorAll('body *');
-      for (var i = 0; i < nodes.length; i++) {
-        var el = nodes[i];
-        if (el.closest && el.closest('#mnr-ai-controls')) continue;
-        var r = el.getBoundingClientRect();
-        if (r.top <= 2 && r.width >= window.innerWidth * 0.9 &&
-            r.bottom > band && r.bottom < 240) band = r.bottom;
-      }
-      bar.style.top = (band ? Math.round(band) + 10 : 126) + 'px';
+      /* Docked bottom-right on phones. Sitting below the header put it straight
+         on top of the game tabs - it covered the Memory button entirely. The
+         bottom-right corner is the only area not owned by the agent's own UI. */
+      bar.style.top = 'auto';
+      bar.style.bottom = '16px';
+      bar.style.left = 'auto';
+      bar.style.right = '14px';
+      bar.style.transform = 'none';
     }
     place();
     setTimeout(place, 600);
