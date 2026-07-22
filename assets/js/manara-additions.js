@@ -183,6 +183,22 @@
     f.parentNode.insertBefore(el, f);   // sits as the last band before the footer
   }
 
+  // Move the FAQ section to sit just above the footer, and retitle it "FAQs".
+  // Done in the overlay (not the bundle payload, which the compiler rejects when
+  // sections are moved). The bundle re-renders #faq in its original spot; we relocate
+  // it each tick. Its accordions are native <details>, so moving the node keeps them
+  // working, and this can never blank the page — the payload is untouched.
+  function moveFaqToFooter() {
+    var faq = document.querySelector('#faq') || document.querySelector('section[data-screen-label="FAQ"]');
+    var footer = document.querySelector('footer');
+    if (!faq || !footer || !footer.parentNode) return;
+    var hs = faq.querySelectorAll('h1,h2,h3');
+    for (var i = 0; i < hs.length; i++) {
+      if (/before you ask/i.test(hs[i].textContent)) { hs[i].textContent = 'FAQs'; break; }
+    }
+    if (footer.previousElementSibling !== faq) footer.parentNode.insertBefore(faq, footer);
+  }
+
   // The homepage careers section shows the full apply form (with CV upload) — that
   // belongs only on the dedicated Careers page. Hide the embedded form and drop in a
   // button that leads to careers.html, where applicants actually apply.
@@ -398,6 +414,7 @@
     styleCardButtons();
     injectPublications();
     injectPerspectives();
+    moveFaqToFooter();
     replaceCareersForm();
     tightenSections();
     gate3dHero();
