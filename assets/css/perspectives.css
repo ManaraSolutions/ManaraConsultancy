@@ -109,6 +109,16 @@ body.perspectives{
 .pclose p{margin:14px 0 0}
 .pclose .pemph{color:var(--red);font-weight:700}
 
+/* ---- related reading (internal links) ---- */
+.prelated{margin:44px 0 0}
+.prelated .plabel{color:var(--red);font-size:11px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+.prgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.prgrid a{display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px;transition:border-color .18s,transform .18s}
+.prgrid a:hover{border-color:rgba(230,0,35,.4);transform:translateY(-3px)}
+.prgrid .prcat{color:var(--red);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.prgrid strong{display:block;font-size:16px;color:var(--ink);font-weight:800;line-height:1.25;margin-top:5px;letter-spacing:-.2px}
+@media(max-width:520px){.prgrid{grid-template-columns:1fr}}
+
 /* ---- author bio ---- */
 .pbio{display:flex;gap:16px;align-items:flex-start;border-top:1px solid var(--line);margin-top:40px;padding:26px 0 10px}
 .pbio svg{width:44px;height:44px;flex:0 0 44px}
