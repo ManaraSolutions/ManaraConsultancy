@@ -144,6 +144,45 @@
     f.insertBefore(d.firstChild, f.firstChild);
   }
 
+  // A light "Perspectives" band on the dark homepage — previews the blog and matches
+  // its light editorial look, so the jump from the dark site into the light blog reads
+  // as intentional. Standalone section, inserted just before the footer; the observer
+  // re-adds it if a render removes it. All styles inline (a <head> <style> gets wiped).
+  function pCard(href, cat, title, desc) {
+    return '<a href="' + href + '" style="display:block;text-decoration:none;background:#fff;' +
+      'border:1px solid #e6e6ea;border-radius:14px;padding:24px">' +
+      '<div style="color:#E60023;font:700 11px/1 Arial,Helvetica,sans-serif;letter-spacing:2px;text-transform:uppercase">' + cat + '</div>' +
+      '<div style="font:800 20px/1.25 Arial,Helvetica,sans-serif;color:#1b1b1f;margin:10px 0 8px;letter-spacing:-.3px">' + title + '</div>' +
+      '<div style="color:#6b7280;font:400 14px/1.5 Arial,Helvetica,sans-serif">' + desc + '</div></a>';
+  }
+  var PERSPECTIVES_HTML =
+    '<div style="max-width:1080px;margin:0 auto">' +
+      '<div style="text-align:center;margin-bottom:34px">' +
+        '<div style="color:#E60023;font:700 12px/1 Arial,Helvetica,sans-serif;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px">Perspectives</div>' +
+        '<h2 style="font:800 clamp(28px,4vw,40px)/1.1 Arial,Helvetica,sans-serif;color:#1b1b1f;margin:0;letter-spacing:-.5px">Field notes from the practice</h2>' +
+        '<p style="color:#6b7280;font:400 16px/1.6 Arial,Helvetica,sans-serif;max-width:46ch;margin:14px auto 0">Practical writing on business, AI, Gulf expansion and startups — the same thinking we bring to client work.</p>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">' +
+        pCard('blog-gulf-expansion.html', 'Gulf Strategy', 'Five Things Lebanese Businesses Get Wrong in the Gulf', 'The Gulf feels close — and that proximity is exactly what trips founders up.') +
+        pCard('blog-ai-small-business.html', 'AI &amp; Automation', 'What AI Can Actually Do for a Small Business', 'One repetitive job removed, done properly — starting with WhatsApp.') +
+        pCard('blog-business-strategy.html', 'Strategy', 'Strategy, Made Practical', 'A leaner strategy method for founders and SMEs in MENA markets.') +
+      '</div>' +
+      '<div style="text-align:center;margin-top:34px">' +
+        '<a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font:700 15px/1 Arial,Helvetica,sans-serif;' +
+        'padding:14px 30px;border-radius:999px;background:#E60023;color:#fff;text-decoration:none">Read the series →</a>' +
+      '</div>' +
+    '</div>';
+  function injectPerspectives() {
+    if (document.querySelector('.mnr-perspectives')) return;   // already there
+    var f = document.querySelector('footer');
+    if (!f || !f.parentNode) return;
+    var el = document.createElement('section');
+    el.className = 'mnr-perspectives';
+    el.style.cssText = 'background:#ffffff;padding:clamp(48px,7vw,84px) 22px';
+    el.innerHTML = PERSPECTIVES_HTML;
+    f.parentNode.insertBefore(el, f);   // sits as the last band before the footer
+  }
+
   // The homepage careers section shows the full apply form (with CV upload) — that
   // belongs only on the dedicated Careers page. Hide the embedded form and drop in a
   // button that leads to careers.html, where applicants actually apply.
@@ -358,6 +397,7 @@
     injectVoice();
     styleCardButtons();
     injectPublications();
+    injectPerspectives();
     replaceCareersForm();
     tightenSections();
     gate3dHero();
