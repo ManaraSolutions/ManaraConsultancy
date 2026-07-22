@@ -165,7 +165,7 @@
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">' +
         pCard('blog-gulf-expansion.html', 'Gulf Strategy', 'Five Things Lebanese Businesses Get Wrong in the Gulf', 'The Gulf feels close — and that proximity is exactly what trips founders up.') +
         pCard('blog-ai-small-business.html', 'AI &amp; Automation', 'What AI Can Actually Do for a Small Business', 'One repetitive job removed, done properly — starting with WhatsApp.') +
-        pCard('blog-business-strategy.html', 'Strategy', 'Strategy, Made Practical', 'A leaner strategy method for founders and SMEs in MENA markets.') +
+        pCard('blog-lebanon-salary-gap.html', 'Compensation', 'The Salary Nobody Declares', 'How Lebanon really pays — and how little of it appears on paper.') +
       '</div>' +
       '<div style="text-align:center;margin-top:34px">' +
         '<a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font:700 15px/1 Arial,Helvetica,sans-serif;' +
