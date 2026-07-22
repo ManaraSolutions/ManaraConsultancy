@@ -183,20 +183,24 @@
     f.parentNode.insertBefore(el, f);   // sits as the last band before the footer
   }
 
-  // Move the FAQ section to sit just above the footer, and retitle it "FAQs".
-  // Done in the overlay (not the bundle payload, which the compiler rejects when
-  // sections are moved). The bundle re-renders #faq in its original spot; we relocate
-  // it each tick. Its accordions are native <details>, so moving the node keeps them
-  // working, and this can never blank the page — the payload is untouched.
-  function moveFaqToFooter() {
+  // The FAQ now lives on its own page (faq.html). Hide the homepage FAQ section
+  // and add a "Frequently asked questions" link in the footer. Done in the overlay,
+  // not the bundle payload (the compiler blanks the page when its sections are edited),
+  // so this can never break the homepage. Re-applied each tick; idempotent.
+  function faqToFooterLink() {
     var faq = document.querySelector('#faq') || document.querySelector('section[data-screen-label="FAQ"]');
+    if (faq) faq.style.setProperty('display', 'none', 'important');
     var footer = document.querySelector('footer');
-    if (!faq || !footer || !footer.parentNode) return;
-    var hs = faq.querySelectorAll('h1,h2,h3');
-    for (var i = 0; i < hs.length; i++) {
-      if (/before you ask/i.test(hs[i].textContent)) { hs[i].textContent = 'FAQs'; break; }
-    }
-    if (footer.previousElementSibling !== faq) footer.parentNode.insertBefore(faq, footer);
+    if (!footer || footer.querySelector('.mnr-faq-link')) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'mnr-faq-link';
+    wrap.style.cssText = 'text-align:center;padding:2px 24px 16px';
+    wrap.innerHTML = '<a href="faq.html" style="color:#E6CC8C;text-decoration:none;' +
+      "font:600 13.5px/1 'Archivo',sans-serif;letter-spacing:.02em;border:1px solid rgba(230,204,140,.4);" +
+      'border-radius:999px;padding:9px 20px;display:inline-block">Frequently asked questions →</a>';
+    var pubs = footer.querySelector('.mnr-pubs');
+    if (pubs && pubs.parentNode) pubs.parentNode.insertBefore(wrap, pubs.nextSibling);
+    else footer.insertBefore(wrap, footer.firstChild);
   }
 
   // The homepage careers section shows the full apply form (with CV upload) — that
@@ -414,7 +418,7 @@
     styleCardButtons();
     injectPublications();
     injectPerspectives();
-    moveFaqToFooter();
+    faqToFooterLink();
     replaceCareersForm();
     tightenSections();
     gate3dHero();
