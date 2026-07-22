@@ -192,31 +192,26 @@
     var faq = document.querySelector('#faq') || document.querySelector('section[data-screen-label="FAQ"]');
     if (faq) faq.style.setProperty('display', 'none', 'important');
 
-    // Pain-points -> its own page; hide the block and drop a "Marketing Strategy"
-    // card in its place (linking to marketing.html), in the same card style. The
-    // card is inserted OUTSIDE the React section (as a sibling, after it), like the
-    // Solutions card, so a re-render can't wipe it.
+    // Pain-points flip cards -> now on marketing.html: hide the homepage block.
     var cards = document.querySelectorAll('div[style*="border-radius:24px"],div[style*="border-radius: 24px"]');
-    var pain = null;
     for (var i = 0; i < cards.length; i++) {
-      if (/turning pain points/i.test(cards[i].textContent)) { pain = cards[i]; break; }
+      if (/turning pain points/i.test(cards[i].textContent)) { cards[i].style.setProperty('display', 'none', 'important'); break; }
     }
-    if (pain) {
-      pain.style.setProperty('display', 'none', 'important');
-      var sec = pain.closest ? pain.closest('section') : null;
-      var host = sec || pain.parentNode;
-      if (host && host.parentNode && !document.querySelector('.mnr-mktg-card')) {
-        var a = document.createElement('a');
-        a.className = 'mnr-mktg-card';
-        a.href = 'marketing.html';
-        a.style.cssText = 'display:block;text-decoration:none;max-width:1100px;margin:8px auto 24px;' +
-          'border:1px solid rgba(230,204,140,.24);border-radius:24px;padding:clamp(26px,4vw,44px);' +
-          'background:radial-gradient(120% 120% at 0% 0%,rgba(199,161,78,.1),transparent 55%),rgba(12,26,42,.55)';
-        a.innerHTML = '<div style="font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#C7A14E;font-weight:600;margin-bottom:10px">Marketing Strategy</div>' +
-          '<div style="font-family:\'Cormorant Garamond\',serif;font-weight:600;font-size:clamp(26px,3.6vw,40px);color:#F4EEE1;margin:0 0 10px;line-height:1.05">Turning pain points into power points &rarr;</div>' +
-          '<div style="color:#CBBA98;font-size:16px;line-height:1.6;margin:0;max-width:660px">Every marketing frustration hides an advantage. See how we flip six of the most common ones &mdash; and the full method behind it.</div>';
-        host.parentNode.insertBefore(a, host.nextSibling);
+
+    // Point the EXISTING "Marketing Strategy" service card (sv3) at marketing.html —
+    // only its "Learn more" link changes (was content-calendar.html). No card injected.
+    var mcard = null, t = document.querySelector('[data-tk="sv3_t"]');
+    if (t) mcard = t.parentElement;
+    if (!mcard) {
+      var hs = document.querySelectorAll('h3');
+      for (var j = 0; j < hs.length; j++) {
+        if (/^\s*Marketing Strategy\s*$/i.test(hs[j].textContent) &&
+            hs[j].parentElement && /brand positioning/i.test(hs[j].parentElement.textContent)) { mcard = hs[j].parentElement; break; }
       }
+    }
+    if (mcard) {
+      var more = mcard.querySelector('a.svc-more') || mcard.querySelector('a[href="content-calendar.html"]') || mcard.querySelector('a');
+      if (more && more.getAttribute('href') !== 'marketing.html') more.setAttribute('href', 'marketing.html');
     }
 
     var footer = document.querySelector('footer');
