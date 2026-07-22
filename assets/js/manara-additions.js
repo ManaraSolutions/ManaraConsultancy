@@ -183,24 +183,30 @@
     f.parentNode.insertBefore(el, f);   // sits as the last band before the footer
   }
 
-  // The FAQ now lives on its own page (faq.html). Hide the homepage FAQ section
-  // and add a "Frequently asked questions" link in the footer. Done in the overlay,
-  // not the bundle payload (the compiler blanks the page when its sections are edited),
-  // so this can never break the homepage. Re-applied each tick; idempotent.
-  function faqToFooterLink() {
+  // The FAQ (faq.html) and the marketing "pain points" section (marketing.html) now
+  // live on their own pages. Hide both on the homepage and add footer links to them.
+  // Done in the overlay, not the bundle payload (the compiler blanks the page when its
+  // sections are edited), so this can never break the homepage. Idempotent, re-run each tick.
+  function relocateHomeSections() {
     var faq = document.querySelector('#faq') || document.querySelector('section[data-screen-label="FAQ"]');
     if (faq) faq.style.setProperty('display', 'none', 'important');
+    var cards = document.querySelectorAll('div[style*="border-radius:24px"],div[style*="border-radius: 24px"]');
+    for (var i = 0; i < cards.length; i++) {
+      if (/turning pain points/i.test(cards[i].textContent)) { cards[i].style.setProperty('display', 'none', 'important'); break; }
+    }
     var footer = document.querySelector('footer');
-    if (!footer || footer.querySelector('.mnr-faq-link')) return;
-    var wrap = document.createElement('div');
-    wrap.className = 'mnr-faq-link';
-    wrap.style.cssText = 'text-align:center;padding:2px 24px 16px';
-    wrap.innerHTML = '<a href="faq.html" style="color:#E6CC8C;text-decoration:none;' +
+    if (!footer || footer.querySelector('.mnr-foot-nav')) return;
+    var nav = document.createElement('div');
+    nav.className = 'mnr-foot-nav';
+    nav.style.cssText = 'text-align:center;padding:2px 24px 14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap';
+    var s = 'color:#E6CC8C;text-decoration:none;' +
       "font:600 13.5px/1 'Archivo',sans-serif;letter-spacing:.02em;border:1px solid rgba(230,204,140,.4);" +
-      'border-radius:999px;padding:9px 20px;display:inline-block">Frequently asked questions →</a>';
+      'border-radius:999px;padding:9px 20px;display:inline-block';
+    nav.innerHTML = '<a href="marketing.html" style="' + s + '">Marketing strategy →</a>' +
+                    '<a href="faq.html" style="' + s + '">Frequently asked questions →</a>';
     var pubs = footer.querySelector('.mnr-pubs');
-    if (pubs && pubs.parentNode) pubs.parentNode.insertBefore(wrap, pubs.nextSibling);
-    else footer.insertBefore(wrap, footer.firstChild);
+    if (pubs && pubs.parentNode) pubs.parentNode.insertBefore(nav, pubs.nextSibling);
+    else footer.insertBefore(nav, footer.firstChild);
   }
 
   // The homepage careers section shows the full apply form (with CV upload) — that
@@ -418,7 +424,7 @@
     styleCardButtons();
     injectPublications();
     injectPerspectives();
-    faqToFooterLink();
+    relocateHomeSections();
     replaceCareersForm();
     tightenSections();
     gate3dHero();
