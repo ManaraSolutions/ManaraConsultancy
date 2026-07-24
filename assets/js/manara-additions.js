@@ -135,6 +135,7 @@
     '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
     '<a href="view-company-profile.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Company Profile ↗</a>' +
     '<a href="view-sustainability-report.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Sustainability Report ↗</a>' +
+    '<a href="statement-of-work.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Statement of Work ↗</a>' +
     '</div></div>';
   function injectPublications() {
     var f = document.querySelector('footer');
