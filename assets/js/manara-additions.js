@@ -228,6 +228,28 @@
     else footer.insertBefore(nav, footer.firstChild);
   }
 
+  // Next to the "Test the agent" PoC button, add a companion button that opens the
+  // sample AI Opportunity Roadmap — a real deliverable showing what a Manara AI
+  // engagement produces. Placed as a sibling right after the existing gold PoC button
+  // (data-tk="agent_b"), styled as an outline/secondary variant so the gold stays lead.
+  function injectRoadmapButton() {
+    var poc = document.querySelector('a[data-tk="agent_b"]');
+    if (!poc) return;
+    // The PoC button lives in a flex row/column; place the companion in that same row.
+    var host = poc.parentNode;
+    if (!host || host.querySelector('.mnr-roadmap-btn')) return;
+    var a = document.createElement('a');
+    a.className = 'mnr-roadmap-btn';
+    a.setAttribute('href', 'ai-roadmap.html');
+    a.style.cssText = "display:inline-flex;align-items:center;gap:9px;" +
+      "font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;" +
+      "padding:14px 26px;border-radius:999px;cursor:pointer;border:1px solid #C7A14E;" +
+      "background:transparent;color:#E6CC8C;text-decoration:none;white-space:nowrap";
+    a.innerHTML = 'See a sample AI roadmap <span aria-hidden="true">&rarr;</span>';
+    if (poc.nextSibling) host.insertBefore(a, poc.nextSibling);
+    else host.appendChild(a);
+  }
+
   // The homepage careers section shows the full apply form (with CV upload) — that
   // belongs only on the dedicated Careers page. Hide the embedded form and drop in a
   // button that leads to careers.html, where applicants actually apply.
@@ -444,6 +466,7 @@
     injectPublications();
     injectPerspectives();
     relocateHomeSections();
+    injectRoadmapButton();
     replaceCareersForm();
     tightenSections();
     gate3dHero();
