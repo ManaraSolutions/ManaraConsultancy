@@ -232,7 +232,39 @@
   // sample AI Opportunity Roadmap — a real deliverable showing what a Manara AI
   // engagement produces. Placed as a sibling right after the existing gold PoC button
   // (data-tk="agent_b"), styled as an outline/secondary variant so the gold stays lead.
+  // Keyframes/hover for the roadmap button. The bundle strips <head> styles on load,
+  // so we (re)inject this idempotently on every tick. prefers-reduced-motion disables
+  // all movement and leaves a calm, still button.
+  function ensureRoadmapStyle() {
+    if (document.getElementById('mnr-roadmap-style')) return;
+    var st = document.createElement('style');
+    st.id = 'mnr-roadmap-style';
+    st.textContent =
+      '.mnr-roadmap-btn{position:relative;overflow:hidden;' +
+        'transition:background .3s ease,color .3s ease,transform .25s ease,box-shadow .3s ease;' +
+        'animation:mnrRmGlow 2.8s ease-in-out infinite}' +
+      '.mnr-roadmap-btn::before{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;' +
+        'background:linear-gradient(120deg,transparent,rgba(230,204,140,.45),transparent);' +
+        'transform:skewX(-20deg);animation:mnrRmShine 3.8s ease-in-out infinite;pointer-events:none}' +
+      '.mnr-roadmap-btn .rm-arrow{display:inline-block;animation:mnrRmArrow 1.6s ease-in-out infinite}' +
+      '.mnr-roadmap-btn:hover{background:#C7A14E !important;color:#0C1A2A !important;' +
+        'border-color:#C7A14E !important;transform:translateY(-2px);' +
+        'box-shadow:0 10px 26px rgba(199,161,78,.45);animation-play-state:paused}' +
+      '.mnr-roadmap-btn:hover::before{opacity:0}' +
+      '.mnr-roadmap-btn:hover .rm-arrow{animation-play-state:paused;transform:translateX(6px)}' +
+      '.mnr-roadmap-btn:active{transform:translateY(0) scale(.98)}' +
+      '@keyframes mnrRmGlow{0%,100%{box-shadow:0 0 12px 0 rgba(199,161,78,.14)}' +
+        '50%{box-shadow:0 0 22px 3px rgba(199,161,78,.4)}}' +
+      '@keyframes mnrRmArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}' +
+      '@keyframes mnrRmShine{0%{left:-130%}60%,100%{left:135%}}' +
+      '@media (prefers-reduced-motion:reduce){' +
+        '.mnr-roadmap-btn,.mnr-roadmap-btn .rm-arrow{animation:none !important}' +
+        '.mnr-roadmap-btn::before{display:none}}';
+    (document.head || document.documentElement).appendChild(st);
+  }
+
   function injectRoadmapButton() {
+    ensureRoadmapStyle();
     var poc = document.querySelector('a[data-tk="agent_b"]');
     if (!poc) return;
     // The PoC button lives in a flex row/column; place the companion in that same row.
@@ -245,7 +277,7 @@
       "font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;" +
       "padding:14px 26px;border-radius:999px;cursor:pointer;border:1px solid #C7A14E;" +
       "background:transparent;color:#E6CC8C;text-decoration:none;white-space:nowrap";
-    a.innerHTML = 'See a sample AI roadmap <span aria-hidden="true">&rarr;</span>';
+    a.innerHTML = 'See a sample AI roadmap <span class="rm-arrow" aria-hidden="true">&rarr;</span>';
     if (poc.nextSibling) host.insertBefore(a, poc.nextSibling);
     else host.appendChild(a);
   }
