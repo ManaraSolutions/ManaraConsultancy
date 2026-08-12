@@ -136,6 +136,7 @@
     '<a href="view-company-profile.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Company Profile ↗</a>' +
     '<a href="view-sustainability-report.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Sustainability Report ↗</a>' +
     '<a href="statement-of-work.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">Statement of Work ↗</a>' +
+    '<a href="after-the-mastermind.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border:1px solid rgba(230,204,140,.4);border-radius:999px;color:#E6CC8C;text-decoration:none;font-size:13.5px">After the Mastermind ↗</a>' +
     '</div></div>';
   function injectPublications() {
     var f = document.querySelector('footer');
@@ -163,7 +164,8 @@
         '<h2 style="font:800 clamp(28px,4vw,40px)/1.1 Arial,Helvetica,sans-serif;color:#1b1b1f;margin:0;letter-spacing:-.5px">Field notes from the practice</h2>' +
         '<p style="color:#6b7280;font:400 16px/1.6 Arial,Helvetica,sans-serif;max-width:46ch;margin:14px auto 0">Practical writing on business, AI, Gulf expansion and startups — the same thinking we bring to client work.</p>' +
       '</div>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px">' +
+        pCard('after-the-mastermind.html', 'AI &amp; Leadership', 'After the Mastermind: Leading the Business AI Now Runs', 'When the machine becomes the mastermind, the leader\'s job shifts to being its conscience.') +
         pCard('blog-gulf-expansion.html', 'Gulf Strategy', 'Five Things Lebanese Businesses Get Wrong in the Gulf', 'The Gulf feels close — and that proximity is exactly what trips founders up.') +
         pCard('blog-ai-small-business.html', 'AI &amp; Automation', 'What AI Can Actually Do for a Small Business', 'One repetitive job removed, done properly — starting with WhatsApp.') +
         pCard('blog-lebanon-salary-gap.html', 'Compensation', 'The Salary Nobody Declares', 'How Lebanon really pays — and how little of it appears on paper.') +
